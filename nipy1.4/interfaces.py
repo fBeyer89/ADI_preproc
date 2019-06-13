@@ -186,31 +186,35 @@ class NiiWranglerOutputSpec(TraitedSpec):
                   run. each dict should contain at least the series_num (int) and\
                   the series_desc (str). NiiWrangler writes nifti location here.")
     t1 = OutputMultiPath(
-            traits.List(File(exists=True)),
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="anatomical uni nifti (list in chronological order  if repeated)")
     rsfmri = OutputMultiPath(
-            traits.List(File(exists=True)),
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="rsfmri nifti (list in chronological order  if repeated)")
     rs_mag = OutputMultiPath(
-            traits.List(File(exists=True)),
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="rs ap nifti (list in chronological order  if repeated)")
     rs_ph = OutputMultiPath(
-            traits.List(File(exists=True)),
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="rs pa (list in chronological order  if repeated)")
-    dwi      = traits.List(traits.Str(),
+    dwi   = OutputMultiPath(
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="dwi nifti (list in chronological order  if repeated).")
-    dwi_mag  = traits.List(traits.Str(),
+    dwi_mag=OutputMultiPath(
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="dwi ap nifti for topup (list in chronological order  if repeated).")
-    dwi_ph  = traits.List(traits.Str(),
+    dwi_ph= OutputMultiPath(
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="dwi pa nifti for topup (list in chronological order  if repeated).")
-    flair   = traits.List(traits.Str(),
+    flair=  OutputMultiPath(
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="flair nifti (list in chronological order  if repeated).")
     ep_TR=  traits.Either(traits.Enum("NONE"), traits.Float(),
@@ -342,20 +346,30 @@ class NiiWrangler(BaseInterface):
         sd = "series_desc"
         it = "image_type"
         t1 = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("t1",[]), dinfo) if nf in d]
-        self.t1_files = [d[nf] for d in t1]
+        if len(t1)==0:
+            print "no T1 acquired"
+        elif len(t1)==1:
+            self.t1_files = t1[0][nf]
+        else:
+            self.t1_files = [d[nf] for d in t1]
 
 
         #get rsfmri, if no "resting state return default file" and ap/pa scans
         bs = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("rsfmri",[]), dinfo) if nf in d]
-        self.rsfmri_files = [d[nf] for d in bs]
+        if len(bs)==0:
+            print "no rs acquired"
+        elif len(bs)==1:
+            self.rsfmri_files = bs[0][nf]
+        else:
+            self.rsfmri_files = [d[nf] for d in bs]       
 
         #get dwi (and don't raise an error if there is none)
         dwi = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("dwi",[]), dinfo) if nf in d]        
         if len(dwi)==0:
             print "no DTI acquired"
-            self.dwi_files=['nothing to proceed']
-            self.dwi_pa_files=['nothing to proceed']
-            self.dwi_ap_files=['nothing to proceed']        
+            self.dwi_files=['nothing to proceed']  
+        elif len(dwi)==1:
+            self.dwi_files = dwi[0][nf]
         else:
             self.dwi_files = [d[nf] for d in dwi]
  
@@ -363,6 +377,8 @@ class NiiWrangler(BaseInterface):
         if len(flair)==0:
             print "no FLAIR acquired"
             self.flair_files=['nothing to proceed']
+        elif len(flair)==1:
+            self.flair_files = flair[0][nf]
         else:
             self.flair_files = [d[nf] for d in flair]
          
@@ -380,9 +396,9 @@ class NiiWrangler(BaseInterface):
                 isinstance(x[it], list) and
                 len(x[it]) > 2 and
                 x[it][2].strip().lower() == "p", dinfo) # we want the 3rd field of image type to be 'p'
-        self.dwi_mag_files = [d[nf] for d in dwi_mag if nf in d]
+        self.dwi_mag_files = dwi_mag[0][nf] #[d[nf] for d in dwi_mag if nf in d]
         self.ep_dwi_fieldmap_te = dwi_mag[0]["delta_te"]
-        self.dwi_ph_files= [d[nf] for d in dwi_ph if nf in d]
+        self.dwi_ph_files= dwi_ph[0][nf] #[d[nf] for d in dwi_ph if nf in d]
            
         rs_mag = filter(lambda x: sd in x and
                 x[sd] in smap.get("fieldmap_rs",[]) and
@@ -396,9 +412,9 @@ class NiiWrangler(BaseInterface):
                 isinstance(x[it], list) and
                 len(x[it]) > 2 and
                 x[it][2].strip().lower() == "p", dinfo) # we want the 3rd field of image type to be 'p'
-        self.rs_mag_files = [d[nf] for d in rs_mag if nf in d]
+        self.rs_mag_files = rs_mag[0][nf]#[d[nf] for d in rs_mag if nf in d]
         self.ep_rsfmri_fieldmap_te = rs_mag[0]["delta_te"]
-        self.rs_ph_files= [d[nf] for d in rs_ph if nf in d]
+        self.rs_ph_files= rs_ph[0][nf]#[d[nf] for d in rs_ph if nf in d]
         
         #get info about phase difference:
         

@@ -43,14 +43,10 @@ def create_fmap_coreg_pipeline(name='fmap_coreg'):
     'fmap_fullwarp']),
     name='outputnode')
    
-   #### prepare fieldmap ####
-    # split first magnitude image from mag input
-    split = Node(fsl.ExtractROI(t_min=0,  t_size=1),    name='split')
-    fmap_coreg.connect(inputnode, 'mag', split, 'in_file')
-    
+   #### prepare fieldmap ####   
     # strip magnitude image and erode even further
     bet = Node(fsl.BET(frac=0.5,    mask=True),    name='bet')
-    fmap_coreg.connect(split,'roi_file', bet,'in_file')   
+    fmap_coreg.connect(inputnode,'mag', bet,'in_file')   
     erode = Node(fsl.maths.ErodeImage(kernel_shape='sphere',    kernel_size=3,    args=''),    name='erode')
     fmap_coreg.connect(bet,'out_file', erode, 'in_file')
     
@@ -78,7 +74,7 @@ def create_fmap_coreg_pipeline(name='fmap_coreg'):
     interp='spline'),
     name='epi2fmap')
     fmap_coreg.connect([(inputnode,epi2fmap,[('epi_mean', 'in_file')]),
-    (split, epi2fmap, [('roi_file', 'reference')]),
+    (inputnode, epi2fmap, [('mag', 'reference')]),
     (epi2fmap, outputnode, [('out_file', 'epi2fmap')])
     ])
     
@@ -102,12 +98,12 @@ def create_fmap_coreg_pipeline(name='fmap_coreg'):
     out_file='rest_mean2fmap_unwarped.nii.gz',
     datatype='float'),
     name='applywarp0')
-    fmap_coreg.connect([(split, convertwarp0, [('roi_file', 'reference')]),
+    fmap_coreg.connect([(inputnode, convertwarp0, [('mag', 'reference')]),
     (epi2fmap, convertwarp0, [('out_matrix_file', 'premat')]),
     (unwarp, convertwarp0, [('shift_out_file', 'shift_in_file')]),
     (inputnode, convertwarp0, [('pe_dir', 'shift_direction')]),
     (inputnode, applywarp0, [('epi_mean', 'in_file')]),
-    (split, applywarp0, [('roi_file', 'ref_file')]),
+    (inputnode, applywarp0, [('mag', 'ref_file')]),
     (convertwarp0, applywarp0, [('out_file', 'field_file')]),
     (convertwarp0, outputnode, [('out_file', 'unwarpfield_epi2fmap')]),
     (applywarp0, outputnode, [('out_file', 'unwarped_mean_epi2fmap')])

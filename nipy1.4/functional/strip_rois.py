@@ -14,8 +14,6 @@ def strip_rois_func(in_file, t_min):
     import nibabel as nb
     import os
     from nipype.utils.filemanip import split_filename
-    #transform list to file (strip the list) or cheap workaround
-    in_file=in_file[0]
     nii = nb.load(in_file)
     new_nii = nb.Nifti1Image(nii.get_data()[:,:,:,t_min:], nii.get_affine(), nii.get_header())
     new_nii.set_data_dtype(np.float32)

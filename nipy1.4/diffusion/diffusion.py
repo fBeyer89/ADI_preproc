@@ -35,24 +35,30 @@ def create_dti():
         'freesurfer_dir',
         'aseg',
         'dwi',
-        'dwi_ap',
-        'dwi_pa',
+        'dwi_mag',
+        'dwi_ph',
         'bvals',
-        'bvecs'
+        'bvecs',
+        'dwi_dwelltime',
+        'te_diff'
     ]),
         name='inputnode')
     # output node
     outputnode = Node(IdentityInterface(fields=[
+        'bo_brain',
+        "bo_brainmask",
         'dwi_denoised',
-        "distor_field",
+        "mag2b0mat",
+        "mag2b0",
+        "fmap",
         "eddy_corr",
         "rotated_bvecs",
-        	'total_movement_rms',
-        'shell_params',
-        'cnr_maps',
-        'residuals',
-        	'outlier_report',
-        'shell_params',
+        "total_movement_rms",
+	    "outlier_report",
+        "cnr_maps",
+        "residuals",
+        "shell_params",
+        "eddy_params",
         'dti_fa',
         'dti_md',
         'dti_l1',
@@ -73,22 +79,6 @@ def create_dti():
     '''
     distor_corr = create_distortion_correct()
 
-    #''
-    ## upsampling #TODO: upsample with eddy directly, waiting for Alfred for the method
-    #''
-    #flirt = Node(fsl.FLIRT(), name='flirt')
-    #flirt.inputs.apply_isoxfm = 1
-    #TODO: to use this for dtifit, needed to creat another brain mask
-
-    '''
-    getting first bval/bvec files
-    '''
-
-    
-    get_bvalsvecs = Node(util.Function(input_names=["bvals","bvecs","dwi"],
-                              output_names=["bval_file","bvec_file"],
-                              function = return_list_element), name="get_bvalsvecs")  
-
     '''
     tensor fitting
     --------------
@@ -99,22 +89,18 @@ def create_dti():
     dwi_preproc.connect([
 
         (inputnode, distor_corr, [('dwi', 'inputnode.dwi')]),
-        (inputnode, distor_corr, [('dwi_ap', 'inputnode.dwi_ap')]),
-        (inputnode, distor_corr, [('dwi_pa', 'inputnode.dwi_pa')]),
-        (inputnode, get_bvalsvecs, [("bvals", "bvals")]),
-        (inputnode, get_bvalsvecs, [("bvecs", "bvecs")]),
-        (inputnode, get_bvalsvecs, [("dwi", "dwi")]),
-        (get_bvalsvecs, distor_corr, [("bval_file", "inputnode.bvals")]),
-        (get_bvalsvecs, distor_corr, [("bvec_file", "inputnode.bvecs")]),
-        (get_bvalsvecs, dti, [("bval_file", "bvals")]),
+        (inputnode, distor_corr, [('dwi_mag', 'inputnode.dwi_mag')]),
+        (inputnode, distor_corr, [('dwi_ph', 'inputnode.dwi_ph')]),
+        (inputnode, distor_corr, [("bvals", "inputnode.bvals")]),
+        (inputnode, distor_corr, [("bvecs", "inputnode.bvecs")]),
+        (inputnode, distor_corr, [("dwi_dwelltime", "inputnode.dwi_dwelltime")]),
+        (inputnode, distor_corr, [("te_diff", "inputnode.te_diff")]),
         (distor_corr, outputnode, [('outputnode.bo_brain', 'bo_brain')]),
         (distor_corr, outputnode, [('outputnode.bo_brainmask', 'bo_brainmask')]),
-        (distor_corr, outputnode, [('outputnode.noise', 'noise')]),
         (distor_corr, outputnode, [('outputnode.dwi_denoised', 'dwi_denoised')]),
-        (distor_corr, outputnode, [('outputnode.dwi_unringed', 'dwi_unringed')]),
-        (distor_corr, outputnode, [('outputnode.topup_corr', 'topup_corr')]),
-        (distor_corr, outputnode, [('outputnode.topup_field', 'topup_field')]),
-        (distor_corr, outputnode, [('outputnode.topup_fieldcoef', 'topup_fieldcoef')]),
+        (distor_corr, outputnode, [('outputnode.fmap','fmap')]),
+        (distor_corr, outputnode, [('outputnode.mag2b0mat','mag2b0mat')]),
+        (distor_corr, outputnode, [('outputnode.mag2b0','mag2b0')]),
         (distor_corr, outputnode, [('outputnode.eddy_corr', 'eddy_corr')]),
         (distor_corr, outputnode, [('outputnode.rotated_bvecs', 'rotated_bvecs')]),
         (distor_corr, outputnode, [('outputnode.total_movement_rms', 'total_movement_rms')]),
@@ -124,10 +110,8 @@ def create_dti():
         (distor_corr, outputnode, [('outputnode.outlier_report', 'outlier_report')]),
         (distor_corr, dti, [("outputnode.rotated_bvecs", "bvecs")]),
         (distor_corr, dti, [('outputnode.bo_brainmask', 'mask')]),
-        #(distor_corr, flirt, [('outputnode.eddy_corr', 'in_file')]),
-        #(distor_corr, flirt, [('outputnode.eddy_corr', 'reference')]),
-        #(flirt, dti, [('out_file', 'dwi')]),
         (distor_corr, dti, [('outputnode.eddy_corr', 'dwi')]),
+        (inputnode, dti, [("bvals", "bvals")]),
         (dti, outputnode, [('FA', 'dti_fa')]),
         (dti, outputnode, [('MD', 'dti_md')]),
         (dti, outputnode, [('L1', 'dti_l1')]),

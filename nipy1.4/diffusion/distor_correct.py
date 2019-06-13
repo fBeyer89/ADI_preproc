@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Aug 11 13:13:53 2018
+Created on Thu June 13 2019
 
-@author: Rui Zhang
+@author: Frauke Beyer
 """
 '''
-Commands use during diffusion-weighted images preprocessing
+Diffusion-weighted imaging preprocessing for ADI study
 =========================================================================
-Warp commands dwidenoise & mrdegibbs from MRTrix3.0; eddy-openmp from FSL
+denoising with dwidenoise from MRTrix3.0; 
+prepare fieldmap based on magnitude and phase image
+eddy-openmp from FSL with replace outliers option but no slice-to-volume
+correction
 -------------------------------------------------------------------------
-for unkonwn reason they are not included after loading relavant interface
 '''
 from nipype import Node, Workflow
 from dwi_corr_util import DWIdenoise
@@ -52,6 +54,7 @@ def create_distortion_correct():
     ]),
         name='outputnode')
 
+       
     # noise reduction on all images
     denoise = Node(DWIdenoise(noise='noise.nii.gz'), name="denoise")
 
@@ -68,9 +71,10 @@ def create_distortion_correct():
     bet.inputs.frac = 0.2
     bet.inputs.robust = True
     
-    distor_correct.connect([(inputnode,denoise,[('dwi', 'in_file')]),
+    distor_correct.connect([
+    (inputnode, denoise,[('dwi', 'in_file')]),
     (denoise, extract_b0, [('out_file', 'in_file')]),
-    (extract_b0, bet, [('roi_file', 'in_file')])
+    (extract_b0, bet, [('roi_file', 'in_file')]),
     (denoise, outputnode, [('out_file', 'dwi_denoised')]),
     (bet, outputnode, [("mask_file", "bo_brainmask")]),
     (bet, outputnode, [("out_file", "bo_brain")]),
@@ -78,7 +82,7 @@ def create_distortion_correct():
     
     #register mag and B0 image with flirt    
     mag2b0 = Node(fsl.FLIRT(dof=6,
-    out_file='rest_mag2b0.nii.gz',
+    out_file='mag2b0.nii.gz',
     interp='spline'), name="mag2b0")
   
     
@@ -133,12 +137,12 @@ def create_distortion_correct():
 
     adjust_mat = Node(util.Function(input_names=["fn"],
                   output_names=["fn"],
-                  function = correct_fn), name="adjust_fmap")      
+                  function = correct_fn), name="adjust_mat")      
     
     distor_correct.connect([
         (prep_fmap, calc_hz, [('out_fieldmap', 'in_file')]),
         (calc_hz, remove_vol, [('out_file', 'in_file')]),
-        (remove_vol, adjust_fmap, [('out_file', 'fn')]),
+        (remove_vol, adjust_fmap, [('roi_file', 'fn')]),
         (mag2b0, adjust_mat, [('out_matrix_file', 'fn')])
         ])
     
@@ -190,15 +194,13 @@ def create_distortion_correct():
     ''
     distor_correct.connect([
 
-     
-        (inputnode, denoise, [('dwi', 'in_file')]),
         (inputnode, mk_index, [('dwi', 'dwi_file')]),
         (inputnode, mk_acq, [('dwi_dwelltime', 'epi_acq_time')]),
         (bet, eddy, [("mask_file", "in_mask")]),
         (inputnode, eddy, [("bvecs", "in_bvec")]),
         (inputnode, eddy, [("bvals", "in_bval")]),
         (mk_acq, eddy, [('fn', 'in_acqp')]),
-        (mk_index, eddy, [('fn', 'in_acqp')]),
+        (mk_index, eddy, [('fn', 'in_index')]),
         (adjust_mat, eddy, [('fn', 'field_mat')]),
         (adjust_fmap, eddy, [('fn', 'field')]),
         (denoise, eddy, [("out_file", "in_file")]),
