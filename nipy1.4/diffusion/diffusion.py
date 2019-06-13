@@ -44,10 +44,7 @@ def create_dti():
     # output node
     outputnode = Node(IdentityInterface(fields=[
         'dwi_denoised',
-        "dwi_unringed",
-        "topup_corr",
-        "topup_field",
-        "topup_fieldcoef",
+        "distor_field",
         "eddy_corr",
         "rotated_bvecs",
         	'total_movement_rms',

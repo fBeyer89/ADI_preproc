@@ -26,6 +26,7 @@ def create_mgzconvert_pipeline(name='mgzconvert'):
                                                      'anat_brain',
                                                      'anat_brain_mask',
                                                      'wmseg',
+                                                     'csfseg',
                                                      'wmedge']),
                       name='outputnode')
     # import files from freesurfer
@@ -53,6 +54,11 @@ def create_mgzconvert_pipeline(name='mgzconvert'):
                              match=[2, 7, 41, 46, 16],#3,42
                              binary_file='T1_brain_wmseg.nii.gz'),
                  name='wmseg')
+        
+    csfseg = Node(fs.Binarize(out_type='nii.gz',
+                             match=[4,14,43],
+                             binary_file='T1_brain_csfseg.nii.gz'),
+                 name='csfseg')   
     # make edge from wmseg to visualize coregistration quality
     edge = Node(fsl.ApplyMask(args='-edge -bin',
                               out_file='T1_brain_wmedge.nii.gz'),
@@ -62,6 +68,7 @@ def create_mgzconvert_pipeline(name='mgzconvert'):
                                                 ('fs_subject_id', 'subject_id')]),
                         (fs_import, head_convert, [('T1', 'in_file')]),
                         (fs_import, wmseg, [(('aparc_aseg', get_aparc_aseg), 'in_file')]),
+                        (fs_import, csfseg, [(('aparc_aseg', get_aparc_aseg), 'in_file')]),
                         (fs_import, brain_convert, [('brainmask', 'in_file')]),
                         (wmseg, edge, [('binary_file', 'in_file'),
                                        ('binary_file', 'mask_file')]),
@@ -70,6 +77,7 @@ def create_mgzconvert_pipeline(name='mgzconvert'):
                         (brain_convert, brain_binarize, [('out_file', 'in_file')]),
                         (brain_binarize, outputnode, [('out_file', 'anat_brain_mask')]),
                         (wmseg, outputnode, [('binary_file', 'wmseg')]),
+                        (csfseg, outputnode, [('binary_file', 'csfseg')]),
                         (edge, outputnode, [('out_file', 'wmedge')])
                         ])
 

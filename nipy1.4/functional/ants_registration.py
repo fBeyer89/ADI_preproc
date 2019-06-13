@@ -17,8 +17,7 @@ def create_ants_registration_pipeline(name='ants_registration'):
     ants_registration = Workflow(name='ants_registration')
     # inputnode
     inputnode=Node(util.IdentityInterface(fields=['denoised_ts',
-    'ants_affine',
-    'ants_warp',
+    'composite_transform',
     'ref'
     ]),
     name='inputnode')
@@ -27,8 +26,6 @@ def create_ants_registration_pipeline(name='ants_registration'):
     ]),
     name='outputnode')
 
-    #also transform to mni space
-    collect_transforms = Node(interface = util.Merge(2),name='collect_transforms')    
     
     ants_reg = Node(ants.ApplyTransforms(input_image_type = 3, dimension = 3, interpolation = 'Linear'), name='ants_reg')
     
@@ -38,9 +35,7 @@ def create_ants_registration_pipeline(name='ants_registration'):
     ants_registration.connect([
                           (inputnode, ants_reg, [('denoised_ts', 'input_image')]),
                           (inputnode, ants_reg, [('ref', 'reference_image')]),
-                          (inputnode, collect_transforms, [('ants_affine', 'in1')]),
-                          (inputnode, collect_transforms, [('ants_warp', 'in2')]),
-                          (collect_transforms, ants_reg,  [('out', 'transforms')]),
+                          (inputnode, ants_reg, [('composite_transform', 'transforms')]),
                           (ants_reg, outputnode, [('output_image', 'ants_reg_ts')])
                           ])
                           

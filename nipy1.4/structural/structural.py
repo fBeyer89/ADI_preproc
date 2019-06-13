@@ -32,7 +32,7 @@ def create_structural():
     name='inputnode')    
     
     outputnode=Node(util.IdentityInterface(fields=['brain','brainmask','anat2std_transforms','std2anat_transforms','anat2std',
-                                                   'anat_head','wmseg','wmedge', 'subject_id']),
+                                                   'anat_head','wmseg','csfseg','wmedge', 'subject_id']),
     name='outputnode')      
     
     # workflow to run freesurfer reconall
@@ -65,6 +65,7 @@ def create_structural():
          (mgzconvert, outputnode, [('outputnode.anat_brain_mask', 'brainmask')]),
          (mgzconvert, outputnode, [('outputnode.anat_head', 'anat_head')]),
          (mgzconvert, outputnode, [('outputnode.wmseg', 'wmseg')]),
+         (mgzconvert, outputnode, [('outputnode.csfseg', 'csfseg')]),
          (mgzconvert, outputnode, [('outputnode.wmedge', 'wmedge')]),
          (reconall, outputnode, [('outputnode.fs_subject_id', 'subject_id')])
          ])
