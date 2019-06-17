@@ -14,11 +14,10 @@ from strip_rois import strip_rois_func
 from moco import create_moco_pipeline
 from transform_timeseries import create_transform_pipeline
 from smoothing import create_smoothing_pipeline
-from ants_registration import create_ants_registration_pipeline
 from fieldmap_coreg import create_fmap_coreg_pipeline
 from nipype.interfaces.fsl import ICA_AROMA
-import os
-
+from denoising.denoise_for_aroma import create_denoise_pipeline
+#from ants_registration import create_ants_registration_pipeline
 '''
 Main workflow for resting state preprocessing.
 ====================================================
@@ -49,6 +48,8 @@ def create_resting():
     'anat_head',
     'anat_brain',
     'anat_brain_mask',
+    'wmseg',
+    'csfseg',
     'vol_to_remove', 
     'TR',
     'highpass_freq',
@@ -143,23 +144,52 @@ def create_resting():
      ])
 
     
+    def getcwd(subject_id):
+        import os
+        tmp=os.getcwd()
+        tmp=tmp[:-6]
+        tmp=tmp+'ica_aroma/out' #%(subject_id)
+        return tmp
+        
+    get_wd = Node(util.Function(input_names=['subject_id'],
+    output_names=["d"],
+    function=getcwd),
+    name='get_wd')
+    
     ica_aroma= Node(ICA_AROMA(), name="ica_aroma")
     ica_aroma.inputs.denoise_type = 'both'
-    ica_aroma.inputs.out_dir = os.getcwd()
+    #ica_aroma.inputs.out_dir = os.getcwd()
 
     func_preproc.connect([
     (moco, ica_aroma, [('outputnode.par_moco','motion_parameters')]),
     (smoothing, ica_aroma, [('outputnode.ts_smoothed', 'in_file')]),
     (fnirt, ica_aroma, [('field_file', 'fnirt_warp_file')]),
-    (transform_ts, ica_aroma, [('outputnode.brain_mask_resamp', 'mask')])
+    (transform_ts, ica_aroma, [('outputnode.comb_mask_resamp', 'mask')]),
+    (inputnode, get_wd, [('subject_id', 'subject_id')]),
+    (get_wd, ica_aroma, [('d', 'out_dir')])
     ])
 
+    ##POSTPROCESSING
+    postprocess=create_denoise_pipeline()
+    
+    func_preproc.connect([
+    (transform_ts, postprocess, [('outputnode.comb_mask_resamp', 'inputnode.brain_mask')]),                              
+    (meanintensnorm, postprocess,   [('out_file', 'inputnode.epi_coreg')]),
+    (inputnode, postprocess,    [('TR', 'inputnode.tr')]),
+    (inputnode, postprocess,    [('highpass_freq', 'inputnode.highpass_freq')]),
+    (inputnode, postprocess,    [('wmseg', 'inputnode.wmseg')]),
+    (inputnode, postprocess,    [('csfseg', 'inputnode.csfseg')]),
+    ])   
+    
     #outputnode
-    outputnode=Node(util.IdentityInterface(fields=['par','rms','mean_epi','tsnr','stddev_file', 'fmap','unwarped_mean_epi2fmap',
-                                                   'coregistered_epi2fmap', 'fmap_fullwarp', 'epi2anat', 'epi2anat_mat',
-                                                   'epi2anat_dat','epi2anat_mincost','full_transform_ts','realigned_ts',
-                                                   'full_transform_mean', 'resamp_brain', 'resamp_brain_mask','detrended_epi',
-                                                   'dvars_file']),
+    outputnode=Node(util.IdentityInterface(fields=['par','rms','mean_epi','tsnr','stddev_file', 'realigned_ts',
+                                                   'fmap','unwarped_mean_epi2fmap', 'coregistered_epi2fmap', 'fmap_fullwarp', 
+                                                   'epi2anat', 'epi2anat_mat','epi2anat_dat','epi2anat_mincost',
+                                                   'full_transform_ts', 'full_transform_mean', 'resamp_t1', 'comb_mask_resamp','dvars_file',
+                                                   'out_flirt_prep', 'out_matrix_flirt_prep', 'out_warped', 'out_warp_field',
+                                                   'aggr_denoised_file', 'nonaggr_denoised_file', 'out_dir',
+                                                   'wmcsf_mask','combined_motion','comp_regressor','comp_F','comp_pF',
+                                                   'out_betas','ts_fullspectrum','ts_filtered']),
     name='outputnode')  
         
     # connections
@@ -183,9 +213,26 @@ def create_resting():
     ]),
     (transform_ts, outputnode, [('outputnode.trans_ts', 'full_transform_ts'),
     ('outputnode.trans_ts_mean', 'full_transform_mean'),
-    ('outputnode.resamp_brain', 'resamp_brain'),
-    ('outputnode.brain_mask_resamp', 'resamp_brain_mask'),
+    ('outputnode.resamp_t1', 'resamp_t1'),
+    ('outputnode.comb_mask_resamp', 'comb_mask_resamp'),
     ('outputnode.out_dvars', 'dvars_file')]),
+    (flirt_prep, outputnode, [('out_file', 'out_flirt_prep'),
+    ('out_matrix_file', 'out_matrix_flirt_prep')]),
+    (fnirt, outputnode, [('warped_file', 'out_warped'),
+    ('field_file', 'out_warp_field')]),
+    (ica_aroma, outputnode, [('aggr_denoised_file', 'aggr_denoised_file'),
+                             ('nonaggr_denoised_file', 'nonaggr_denoised_file'),
+                             ('out_dir','out_dir')]),
+    (postprocess, outputnode, [('outputnode.wmcsf_mask', 'wmcsf_mask'),
+                           ('outputnode.combined_motion','combined_motion'),
+                           ('outputnode.comp_regressor', 'comp_regressor'),
+                           ('outputnode.comp_F', 'comp_F'),
+                           ('outputnode.comp_pF','comp_pF'),
+                           ('outputnode.out_betas', 'out_betas'),
+                           ('outputnode.ts_fullspectrum', 'ts_fullspectrum'),
+                           ('outputnode.ts_filtered', 'ts_filtered')
+                           ])
+    
     ])
     
     

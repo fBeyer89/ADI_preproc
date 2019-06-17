@@ -51,7 +51,14 @@ class HCPrepWorkflow(pe.Workflow):
         if sub_dir:
             self.dicom_grabber.inputs.base_directory = sub_dir
             self.data_sink.inputs.base_directory=sub_dir 
-            self.data_sink.inputs.substitutions=[('_subject_', '')]
+            self.data_sink.inputs.substitutions=[('_subject_', ''),
+                                                 ('_filternoise0', 'compcor_gsr'),
+                                                 ('_filternoise1', 'compcor'),
+                                                 ('dtifit__', 'dtifit_'),
+                                                 ('rest_mean2anat_lowres_brain_mask_maths_maths', 'combined_brain_mask'),
+                                                 ('_denoised_roi_brain', '_firstb0'),
+                                                 ('_denoised_roi_brain_mask', '_b0mask')
+                                                 ]
         if dcm_temp:
             self.dicom_grabber.inputs.field_template = {"dicom": dcm_temp}  
         if bids_outputdir:
@@ -78,7 +85,7 @@ class HCPrepWorkflow(pe.Workflow):
             self.data_sink.inputs.base_directory=outputdir
             self.data_sink.inputs.substitutions=[('_subject_', '')]
 
-            
+    
                             
         # nifti wrangler
         series_map = self.hc_config.get("series", {})
@@ -159,6 +166,7 @@ class HCPrepWorkflow(pe.Workflow):
             (self.dwi_wf, self.data_sink, [('outputnode.residuals', 'diffusion.eddy.@residuals')]),
             (self.dwi_wf, self.data_sink, [('outputnode.shell_params', 'diffusion.eddy.@shell_params')]),
 	        (self.dwi_wf, self.data_sink, [('outputnode.outlier_report', 'diffusion.eddy.@outlier_report')]),
+            (self.dwi_wf, self.data_sink, [('outputnode.eddy_params', 'diffusion.eddy.@eddy_params')]),
             (self.dwi_wf, self.data_sink, [('outputnode.dti_fa', 'diffusion.dti.@dti_fa')]),
             (self.dwi_wf, self.data_sink, [('outputnode.dti_md', 'diffusion.dti.@dti_md')]),
             (self.dwi_wf, self.data_sink, [('outputnode.dti_l1', 'diffusion.dti.@dti_l1')]),
@@ -181,12 +189,15 @@ class HCPrepWorkflow(pe.Workflow):
             (self.structural_wf, self.resting, [('outputnode.brain', 'inputnode.anat_brain')]),
             (self.structural_wf, self.resting, [('outputnode.anat_head', 'inputnode.anat_head')]),
             (self.structural_wf, self.resting, [('outputnode.brainmask', 'inputnode.anat_brain_mask')]),
+            (self.structural_wf, self.resting, [('outputnode.wmseg', 'inputnode.wmseg')]),
+            (self.structural_wf, self.resting, [('outputnode.csfseg', 'inputnode.csfseg')]),
             (self.nii_wrangler, self.resting, [("ep_rsfmri_echo_spacings", "inputnode.echo_space")]),
             (self.nii_wrangler, self.resting, [("ep_TR", "inputnode.TR")]),
             (self.resting,self.data_sink, [('outputnode.tsnr','resting.moco.@tsnr_file')]),
             (self.resting,self.data_sink, [('outputnode.par','resting.moco.@realignment_parameters_file')]),
             (self.resting,self.data_sink, [('outputnode.rms','resting.moco.@rms')]),
             (self.resting,self.data_sink, [('outputnode.mean_epi','resting.moco.@mean_epi')]),
+            (self.resting,self.data_sink, [('outputnode.realigned_ts','resting.moco.@realigned_ts')]),
             (self.resting,self.data_sink, [('outputnode.unwarped_mean_epi2fmap','resting.unwarp.@mean_epi_file_unwarped')]),
             (self.resting,self.data_sink, [('outputnode.coregistered_epi2fmap','resting.unwarp.@mean_epi_file')]),
             (self.resting,self.data_sink, [('outputnode.fmap','resting.unwarp.@fmap')]),
@@ -196,10 +207,15 @@ class HCPrepWorkflow(pe.Workflow):
             (self.resting,self.data_sink, [('outputnode.epi2anat_mat','resting.anat_coreg.@epi2anat_mat')]),
             (self.resting,self.data_sink, [('outputnode.full_transform_ts','resting.transform_ts.@full_transform_ts')]),
             (self.resting,self.data_sink, [('outputnode.full_transform_mean','resting.transform_ts.@full_transform_mean')]),
-            (self.resting,self.data_sink, [('outputnode.resamp_brain','resting.transform_ts.@resamp_brain')]),
-            (self.resting,self.data_sink, [('outputnode.detrended_epi','resting.transform_ts.@detrended_epi')]),
-
-            
+            (self.resting,self.data_sink, [('outputnode.resamp_t1','resting.transform_ts.@resamp_t1')]),
+            (self.resting,self.data_sink, [('outputnode.comb_mask_resamp','resting.transform_ts.@comb_mask_resamp')]),
+            (self.resting,self.data_sink, [('outputnode.dvars_file','resting.transform_ts.@dvars_file')]),
+            (self.resting,self.data_sink, [('outputnode.out_warped', 'resting.aroma.@out_warped')]),
+            (self.resting,self.data_sink, [('outputnode.out_warp_field', 'resting.aroma.@out_warp_field')]),
+            (self.resting,self.data_sink, [('outputnode.aggr_denoised_file', 'resting.aroma.@aggr_denoised_file')]),
+            (self.resting,self.data_sink, [('outputnode.nonaggr_denoised_file', 'resting.aroma.@nonaggr_denoised_file')]),
+            (self.resting,self.data_sink, [('outputnode.ts_fullspectrum','resting.aroma.@denoised_fullspectrum')]),
+            (self.resting,self.data_sink, [('outputnode.ts_filtered','resting.aroma.@denoised_filtered')])          
      
             ])
 

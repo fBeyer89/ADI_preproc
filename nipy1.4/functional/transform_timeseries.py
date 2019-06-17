@@ -28,15 +28,16 @@ def create_transform_pipeline(name='transfrom_timeseries'):
     'mat_moco',
     'fullwarp',
     'resolution',
-    'brain_mask'
+    'brain_mask',
     ]),
     name='inputnode')
     # outputnode
     outputnode=Node(util.IdentityInterface(fields=['trans_ts',
     'trans_ts_mean',
     'trans_ts_masked',
-    'resamp_brain',
-    'brain_mask_resamp',
+    'resamp_t1',
+    'anat_mask_resamp',
+    'comb_mask_resamp',
     'out_dvars'
     ]),
     name='outputnode')
@@ -48,7 +49,7 @@ def create_transform_pipeline(name='transfrom_timeseries'):
     ('anat_head', 'reference'),
     ('resolution', 'apply_isoxfm')
     ]),
-    (resample, outputnode, [('out_file', 'resamp_brain')])
+    (resample, outputnode, [('out_file', 'resamp_t1')])
     ])
     # split timeseries in single volumes
     split=Node(fsl.Split(dimension='t',
@@ -83,19 +84,37 @@ def create_transform_pipeline(name='transfrom_timeseries'):
     (tmean, outputnode, [('out_file', 'trans_ts_mean')])
     ])
     
-    # resample brain mask
+    #create brain mask from anatomical and brain extracted tmean 
+    extract_epi_mask= Node(fsl.preprocess.BET(mask=True), name="extract_epi_mask")
+    transform_ts.connect([(tmean, extract_epi_mask, [('out_file', 'in_file')]),
+                          ])   
+    
     resample_brain = Node(afni.Resample(resample_mode='NN',
     outputtype='NIFTI_GZ',
     out_file='T1_brain_mask_lowres.nii.gz'),
     name = 'resample_brain')
+    
+    combine_masks=Node(fsl.utils.ImageMaths(), name="combine_masks")
+    #only use voxels that are present in both masks
+    combine_masks.inputs.op_string='-add'
+    
+    final_mask=Node(fsl.utils.ImageMaths(), name="final_mask")
+    final_mask.inputs.op_string='-thr 2 -bin'
+    
     transform_ts.connect([(inputnode, resample_brain, [('brain_mask', 'in_file')]),
                           (tmean, resample_brain,     [('out_file', 'master')]),
-                          (resample_brain, outputnode, [('out_file', 'brain_mask_resamp')])
+                          (resample_brain, outputnode, [('out_file', 'anat_mask_resamp')]),
+                          (extract_epi_mask, combine_masks, [('mask_file', 'in_file')]),
+                          (resample_brain, combine_masks, [('out_file', 'in_file2')]),
+                          (combine_masks, final_mask, [('out_file', 'in_file')]),
+                          (final_mask, outputnode, [('out_file', 'comb_mask_resamp')])
                           ])
+    
+
     
     #mask the transformed file
     mask = Node(fsl.ApplyMask(), name="mask")
-    transform_ts.connect([(resample_brain,mask, [('out_file', 'mask_file')]),
+    transform_ts.connect([(combine_masks,mask, [('out_file', 'mask_file')]),
                           (merge, mask, [('merged_file', 'in_file')]),
                           (mask, outputnode, [('out_file', 'trans_ts_masked')])
 		         ])

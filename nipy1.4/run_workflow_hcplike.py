@@ -122,7 +122,7 @@ def main(argv=None):
         
         
         # build the workflow, pass it subjects if they were given in the command line
-        wk = HCPrepWorkflow(name="adi_prep", config=conf, base_dir=working_dir)
+        wk = HCPrepWorkflow(name="hcp_prep", config=conf, base_dir=working_dir)
         if subs:
             wk.subjects_node.iterables = ("subject", subs)
         # set the output dir
