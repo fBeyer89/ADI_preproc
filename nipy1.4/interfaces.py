@@ -205,6 +205,10 @@ class NiiWranglerOutputSpec(TraitedSpec):
             traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
             desc="dwi nifti (list in chronological order  if repeated).")
+    dwi_b0   = OutputMultiPath(
+            traits.Either(traits.List(File(exists=True)),File(exists=True)),
+            mandatory=True,
+            desc="dwi nifti (list in chronological order  if repeated).")
     dwi_mag=OutputMultiPath(
             traits.Either(traits.List(File(exists=True)),File(exists=True)),
             mandatory=True,
@@ -283,6 +287,7 @@ class NiiWrangler(BaseInterface):
         self.rs_mag_files = []
         self.rs_ph_files = []
         self.dwi_files = []
+        self.dwi_b0_files=[]
         self.dwi_mag_files = []
         self.dwi_ph_files = []
         self.bval = []
@@ -363,7 +368,7 @@ class NiiWrangler(BaseInterface):
         else:
             self.rsfmri_files = [d[nf] for d in bs]       
 
-        #get dwi (and don't raise an error if there is none)
+        #get 64dir dwi (and don't raise an error if there is none)
         dwi = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("dwi",[]), dinfo) if nf in d]        
         if len(dwi)==0:
             print "no DTI acquired"
@@ -372,6 +377,18 @@ class NiiWrangler(BaseInterface):
             self.dwi_files = dwi[0][nf]
         else:
             self.dwi_files = [d[nf] for d in dwi]
+       
+
+        #get 9b0 dwi (and don't raise an error if there is none)
+        dwi_b0 = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("dwi_b0",[]), dinfo) if nf in d]        
+        if len(dwi_b0)==0:
+            print "no b0 DTI acquired"
+            self.dwi_b0_files=['nothing to proceed']  
+        elif len(dwi_b0)==1:
+            self.dwi_b0_files = dwi_b0[0][nf]
+        else:
+            self.dwi_b0_files = [d[nf] for d in dwi_b0]
+        
  
         flair = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("flair",[]), dinfo) if nf in d]
         if len(flair)==0:
@@ -490,6 +507,7 @@ class NiiWrangler(BaseInterface):
         outputs["rs_mag"] = self.rs_mag_files
         outputs["rs_ph"] = self.rs_ph_files
         outputs["dwi"] = self.dwi_files
+        outputs["dwi_b0"] = self.dwi_b0_files
         outputs["dwi_mag"] = self.dwi_mag_files
         outputs["dwi_ph"] = self.dwi_ph_files
         outputs["flair"] = self.flair_files

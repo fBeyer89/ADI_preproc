@@ -11,7 +11,7 @@ Main workflow for preprocessing of diffusion-weighted data
 Uses file structure set up by conversion
 '''
 from nipype import Node, Workflow
-from distor_correct import create_distortion_correct
+from distor_correct_gibbsringing import create_distortion_correct
 from nipype.interfaces import fsl
 from nipype.interfaces.utility import IdentityInterface
 import nipype.interfaces.freesurfer as fs
@@ -35,6 +35,7 @@ def create_dti():
         'freesurfer_dir',
         'aseg',
         'dwi',
+        'dwi_b0',
         'dwi_mag',
         'dwi_ph',
         'bvals',
@@ -48,6 +49,7 @@ def create_dti():
         'bo_brain',
         "bo_brainmask",
         'dwi_denoised',
+        'dwi_unringed',
         "mag2b0mat",
         "mag2b0",
         "fmap",
@@ -89,7 +91,8 @@ def create_dti():
     dwi_preproc.connect([
 
         (inputnode, distor_corr, [('dwi', 'inputnode.dwi')]),
-        (inputnode, distor_corr, [('dwi_mag', 'inputnode.dwi_mag')]),
+        (inputnode, distor_corr, [('dwi_b0', 'inputnode.dwi_b0')]),
+        (inputnode, distor_corr, [('dwi_mag', 'inputnode.dwi_mag')]),      
         (inputnode, distor_corr, [('dwi_ph', 'inputnode.dwi_ph')]),
         (inputnode, distor_corr, [("bvals", "inputnode.bvals")]),
         (inputnode, distor_corr, [("bvecs", "inputnode.bvecs")]),
@@ -98,6 +101,7 @@ def create_dti():
         (distor_corr, outputnode, [('outputnode.bo_brain', 'bo_brain')]),
         (distor_corr, outputnode, [('outputnode.bo_brainmask', 'bo_brainmask')]),
         (distor_corr, outputnode, [('outputnode.dwi_denoised', 'dwi_denoised')]),
+        (distor_corr, outputnode, [('outputnode.dwi_unringed', 'dwi_unringed')]),
         (distor_corr, outputnode, [('outputnode.fmap','fmap')]),
         (distor_corr, outputnode, [('outputnode.mag2b0mat','mag2b0mat')]),
         (distor_corr, outputnode, [('outputnode.mag2b0','mag2b0')]),
@@ -107,11 +111,12 @@ def create_dti():
         (distor_corr, outputnode, [('outputnode.cnr_maps', 'cnr_maps')]),
         (distor_corr, outputnode, [('outputnode.residuals', 'residuals')]),
         (distor_corr, outputnode, [('outputnode.shell_params', 'shell_params')]),
+        (distor_corr, outputnode, [('outputnode.eddy_params', 'eddy_params')]),
         (distor_corr, outputnode, [('outputnode.outlier_report', 'outlier_report')]),
         (distor_corr, dti, [("outputnode.rotated_bvecs", "bvecs")]),
         (distor_corr, dti, [('outputnode.bo_brainmask', 'mask')]),
         (distor_corr, dti, [('outputnode.eddy_corr', 'dwi')]),
-        (inputnode, dti, [("bvals", "bvals")]),
+        (distor_corr, dti, [("outputnode.bvals", "bvals")]),
         (dti, outputnode, [('FA', 'dti_fa')]),
         (dti, outputnode, [('MD', 'dti_md')]),
         (dti, outputnode, [('L1', 'dti_l1')]),

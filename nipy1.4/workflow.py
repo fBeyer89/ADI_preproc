@@ -50,15 +50,6 @@ class HCPrepWorkflow(pe.Workflow):
         #working_dir = self.get_conf("general","working_dir")     
         if sub_dir:
             self.dicom_grabber.inputs.base_directory = sub_dir
-            self.data_sink.inputs.base_directory=sub_dir 
-            self.data_sink.inputs.substitutions=[('_subject_', ''),
-                                                 ('_filternoise0', 'compcor_gsr'),
-                                                 ('_filternoise1', 'compcor'),
-                                                 ('dtifit__', 'dtifit_'),
-                                                 ('rest_mean2anat_lowres_brain_mask_maths_maths', 'combined_brain_mask'),
-                                                 ('_denoised_roi_brain', '_firstb0'),
-                                                 ('_denoised_roi_brain_mask', '_b0mask')
-                                                 ]
         if dcm_temp:
             self.dicom_grabber.inputs.field_template = {"dicom": dcm_temp}  
         if bids_outputdir:
@@ -83,7 +74,17 @@ class HCPrepWorkflow(pe.Workflow):
             self.resting.inputs.inputnode.pe_dir=ep_unwarp_dir
         if outputdir:
             self.data_sink.inputs.base_directory=outputdir
-            self.data_sink.inputs.substitutions=[('_subject_', '')]
+            self.data_sink.inputs.substitutions=[('_subject_', ''),
+                                                 ('_filternoise0', 'filter_compcor_gsr'),
+                                                 ('_filternoise1', 'filter_compcor'),
+                                                 ('_highpass_filter0', 'highpass_compcor_gsr'),
+                                                 ('_highpass_filter1', 'highpass_compcor'),
+                                                 ('dtifit__', 'dtifit_'),
+                                                 ('rest_mean2anat_lowres_brain_mask_maths_maths', 'combined_brain_mask'),
+                                                 ('_denoised_roi_brain', '_firstb0'),
+                                                 ('_denoised_roi_brain_mask', '_b0mask')
+                                                 ]
+
 
     
                             
@@ -128,6 +129,7 @@ class HCPrepWorkflow(pe.Workflow):
             (self.nii_wrangler, self.data_sink, [("rs_mag", "nifti.@rs_mag")]),       
             (self.nii_wrangler, self.data_sink, [("rs_ph", "nifti.@rs_ph")]),    
             (self.nii_wrangler, self.data_sink, [("dwi", "nifti.@dwi")]), 
+            (self.nii_wrangler, self.data_sink, [("dwi_b0", "nifti.@dwi_b0")]), 
             (self.nii_wrangler, self.data_sink, [("dwi_mag", "nifti.@dwi_mag")]),  
             (self.nii_wrangler, self.data_sink, [("dwi_ph", "nifti.@dwi_ph")]), 
             (self.dicom_convert, self.data_sink, [("bvals", "nifti.@bval")]),
@@ -146,9 +148,10 @@ class HCPrepWorkflow(pe.Workflow):
             (self.structural_wf, self.data_sink, [('outputnode.std2anat_transforms', 'structural.@std2anat_transforms')]),
             
             #diffusion workflow
-            #(self.subjects_node,self.dwi_wf, [("subject", "inputnode.subject_id")]),
+#            (self.subjects_node,self.dwi_wf, [("subject", "inputnode.subject_id")]),
             (self.structural_wf, self.dwi_wf, [("outputnode.subject_id", "inputnode.subject_id")]),
             (self.nii_wrangler, self.dwi_wf, [("dwi", "inputnode.dwi")]),
+            (self.nii_wrangler, self.dwi_wf, [("dwi_b0", "inputnode.dwi_b0")]),
             (self.nii_wrangler, self.dwi_wf, [("dwi_mag", "inputnode.dwi_mag")]),
             (self.nii_wrangler, self.dwi_wf, [("dwi_ph", "inputnode.dwi_ph")]),
             (self.nii_wrangler, self.dwi_wf, [("ep_dwi_dwelltime", "inputnode.dwi_dwelltime")]),
