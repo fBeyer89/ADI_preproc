@@ -165,6 +165,12 @@ def create_distortion_correct():
                                    z_min=0, z_size=-1,
                                    t_min=0,  t_size=1),    name='remove_vol')   
     
+    #smooth the fieldmap so eddy converges
+    smooth_fieldmap=Node(fsl.preprocess.FUGUE() , name="smooth_fieldmap")
+    smooth_fieldmap.inputs.smooth3d=4
+    smooth_fieldmap.inputs.save_fmap=True
+    #smooth_fieldmap.inputs.fmap_out_file="fieldmap_smoothed.nii.gz"  
+    
     #convert . into _ in filenames (otherwise eddy will throw an error)       
     def correct_fn(fn):
         import shutil
@@ -191,7 +197,8 @@ def create_distortion_correct():
     distor_correct.connect([
         (prep_fmap, calc_hz, [('out_fieldmap', 'in_file')]),
         (calc_hz, remove_vol, [('out_file', 'in_file')]),
-        (remove_vol, adjust_fmap, [('roi_file', 'fn')]),
+        (remove_vol, smooth_fieldmap, [('roi_file', 'fmap_in_file')]),
+        (smooth_fieldmap, adjust_fmap, [('fmap_out_file', 'fn')]),
         (mag2b0, adjust_mat, [('out_matrix_file', 'fn')])
         ])
     
@@ -224,19 +231,10 @@ def create_distortion_correct():
 
     # eddy motion correction
     eddy = Node(fsl.epi.Eddy(), name="eddy")
-    eddy.inputs.num_threads = 16 ## total number of CPUs to use
+    eddy.inputs.num_threads = 32 ## total number of CPUs to use
     eddy.inputs.repol = True
     eddy.inputs.cnr_maps=True
     eddy.inputs.residuals=True
-    eddy.inputs.dont_peas=True
-    #from the eddy user guide
-    #we have single shell data and dispersed acquisition of B0 images.
-    #But, if one has a data set with a single shell (i.e. a single non-zero shell) 
-    #and the assumption of no movement between the first b=0 and the first 
-    #diffusion weighted image is true it can be better to avoid that uncertainty. 
-    #And in that case it may be better to turn off peas by setting the 
-    #--dont_peas flag. 
-
 
     ''
     # connect the nodes
