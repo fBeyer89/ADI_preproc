@@ -65,6 +65,31 @@ def create_resting():
     name='inputnode')   
          
     ##PREPROCESSING FOR AROMA (Steps 1 - 7)
+    def merge_if_list(in_file):
+        if type(in_file)==list:
+            import numpy as np
+            import nibabel as nb
+            import os
+            from nipype.utils.filemanip import split_filename
+            nii1 = nb.load(in_file[0])
+            nii1d=nii1.get_data()
+            nii2 = nb.load(in_file[1])
+            nii2d=nii2.get_data()
+            x=np.concatenate((nii1d,nii2d),axis=3)
+            new_nii = nb.Nifti1Image(x, nii1.get_affine(), nii1.get_header())
+            new_nii.set_data_dtype(np.float32)
+            _, base, _ = split_filename(in_file[0])
+            nb.save(new_nii, base + "_merged.nii.gz")
+            return os.path.abspath(base + "_merged.nii.gz")
+        else:
+            return in_file
+    
+    #if rsfmri is a list -> merge files, otherwise return single list. 
+    merge_rs=Node(util.Function(input_names=['in_file'],
+    output_names=["out_file"],
+    function=merge_if_list),
+    name='merge_rs')
+    
     # node to remove first volumes
     remove_vol = Node(util.Function(input_names=['in_file','t_min'],
     output_names=["out_file"],
@@ -89,7 +114,8 @@ def create_resting():
  
     # connections
     func_preproc.connect([  
-    (inputnode, remove_vol, [('func', 'in_file')]),
+    (inputnode, merge_rs, [('func', 'in_file')]),
+    (merge_rs, remove_vol, [('out_file', 'in_file')]),
     (inputnode, remove_vol, [('vol_to_remove', 't_min')]),
     (inputnode, moco, [('anat_brain_mask', 'inputnode.brainmask')]),
     (remove_vol, moco, [('out_file', 'inputnode.epi')]),

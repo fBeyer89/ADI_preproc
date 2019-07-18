@@ -3,7 +3,7 @@ import nipype.interfaces.utility as util     # utility
 import nipype.pipeline.engine as pe   
 from nipype import Function
 from nipype.interfaces.dcm2nii import Dcm2niix
-from interfaces import *
+from interfaces_ADI049 import *
 from config import *
 from util import *
 from bids_conversion import *

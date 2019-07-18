@@ -324,10 +324,15 @@ class NiiWrangler(BaseInterface):
                 # TODO: find out what those others (A/B) are all about. fix this as needed.
                 sn = int(s_num_reg.match(fn).groups()[0])
                 print sn
-                #print nii_by_series
+                #print nii_by_series                                 
                 if sn in nii_by_series:
-                    extras.append(fn)
-                    continue
+                    if sn==3:
+                       nii_by_series[sn] = fn
+                    if sn==4:
+                       nii_by_series[sn] = fn
+                    else:
+                        extras.append(fn)
+                        continue
                 nii_by_series[sn] = fn
             except Exception, e:
                 fails.append(fn)
@@ -349,11 +354,19 @@ class NiiWrangler(BaseInterface):
             #raise ValueError("incorrect number of nifti->series matches (%d/%d)" % (m_count, len(dinfo)))
             
         self.nii_info=dinfo    
+        print dinfo
+        
         # time for some data wrangling
         nf = "nifti_file"
         sd = "series_desc"
         it = "image_type"
-        t1 = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("t1",[]), dinfo) if nf in d]
+        t1 =    filter(lambda x: sd in x and
+                x[sd] in 'mmre_1.9iso_60_30_50_40_45_35_55Hz' and
+                x[it][2].strip().lower() == "m", dinfo)
+        
+        #[d for d in filter(lambda x: sd in x and x[sd] in  and
+        #        x[it][2].strip().lower() == "m", dinfo) if nf in d]
+    
         if len(t1)==0:
                 print "no T1 acquired"
         elif len(t1)==1:
@@ -361,7 +374,7 @@ class NiiWrangler(BaseInterface):
         else:
             self.t1_files = [d[nf] for d in t1]
 
-
+        print self.t1_files
         #get rsfmri, if no "resting state return default file" and ap/pa scans
         bs = [d for d in filter(lambda x: sd in x and x[sd] in smap.get("rsfmri",[]), dinfo) if nf in d]
         if len(bs)==0:
@@ -421,19 +434,20 @@ class NiiWrangler(BaseInterface):
         self.dwi_ph_files= dwi_ph[0][nf] #[d[nf] for d in dwi_ph if nf in d]
            
         rs_mag = filter(lambda x: sd in x and
-                x[sd] in smap.get("fieldmap_rs",[]) and
+                x[sd] in 'mmre_1.9iso_60_30_50_40_45_35_55Hz' and
                 it in x and
                 isinstance(x[it], list) and
                 len(x[it]) > 2 and
-                x[it][2].strip().lower() == "m", dinfo) # we want the 3rd field of image type to be 'm'
+                x[it][2].strip().lower() == "p", dinfo) # because of the weird naming we have to search like this
         rs_ph = filter(lambda x: sd in x and
                 x[sd] in smap.get("fieldmap_rs",[]) and
                 it in x and
                 isinstance(x[it], list) and
                 len(x[it]) > 2 and
-                x[it][2].strip().lower() == "p", dinfo) # we want the 3rd field of image type to be 'p'
-        self.rs_mag_files = rs_mag[0][nf]#[d[nf] for d in rs_mag if nf in d]
-        self.ep_rsfmri_fieldmap_te = rs_mag[0]["delta_te"]
+                x[it][2].strip().lower() == "p", dinfo) # because of the weird naming we have to search like this
+        print rs_mag
+        self.rs_mag_files = rs_mag[0][nf]#[d[nf] for d in rs_mag if nf in d] #
+        self.ep_rsfmri_fieldmap_te = 2.46#rs_mag[0]["delta_te"]
         self.rs_ph_files= rs_ph[0][nf]#[d[nf] for d in rs_ph if nf in d]
         
         #get info about phase difference:
