@@ -14,6 +14,9 @@ Steps in the algorithm:
 3.propagation of hypothalamic segmentations from the atlas images (N=44 in total) to the target space
 4.merging hypothalamic segmentations and label fusion
 
+additional steps:
+5. extract mean MD of the hypothalamus after excluding all voxels with MD values higher than the average of third ventricle.
+
 To perform the steps described in **Algorithm**:
 
 #Necessary prerequirements:
@@ -34,6 +37,11 @@ Step 4.:
 - merges hypothalamic segmentations and anatomical images that were propagated from atlas images to target space
 - merges binarized hypothalamic segmentations from all atlas images with the STEPS algorithm implemented in NiftySeg (https://github.com/KCL-BMEIS/NiftySeg/tree/master/seg-apps), wrapped in nipype (https://nipype.readthedocs.io/en/latest/interfaces/generated/interfaces.niftyseg/label_fusion.html#labelfusion)
 
+Step 5:
+**/extract_MD/extract_MD.sh**
+- convert third ventricle mask from long-timepoint of subject to nifti
+- apply combined transform from bbregister and cross-to-long-coregistration to MD/FA-images
+- extract average MD value after thresholding with mean MD of third ventricle.
 
 For template and atlas images from the LIFE-Adult study, please visit: https://edmond.mpdl.mpg.de/imeji/collection/QEBGeGdvAXHCaS8m
 

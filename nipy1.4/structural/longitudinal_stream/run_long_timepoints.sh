@@ -31,7 +31,7 @@ recon-all -long ${subj}_fu ${subj} -all
 elif [ -d ${SUBJECTS_DIR}/${subj}_fu -a -d ${SUBJECTS_DIR}/${subj}_fu2 ];
 then
 echo "two timepoints fu + fu2"
-recon-all -long ${subj}_fu ${subj} -all
+#recon-all -long ${subj}_fu ${subj} -all
 recon-all -long ${subj}_fu2 ${subj} -all
 
 elif [ -d ${SUBJECTS_DIR}/${subj}_bl -a -d ${SUBJECTS_DIR}/${subj}_fu2 ];

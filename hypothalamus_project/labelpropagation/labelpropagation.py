@@ -32,11 +32,11 @@ working_dir="/data/pt_02161/wd"
 
 #path to template
 ref="/data/pt_life_hypothalamus_segmentation/segmentation/scripts/multiatlas_segmentation/\
-     files_for_publishing_on_edmond/template/T150template0.nii.gz" 
+files_for_publishing_on_edmond/template/T150template0.nii.gz" 
 
 #give here the list of the atlas images, and the images you'd like to segment
 atlaslist="/data/pt_life_hypothalamus_segmentation/segmentation/scripts/multiatlas_segmentation/\
-            files_for_publishing_on_edmond/atlas_images/N44_atlas_images.txt"                          
+files_for_publishing_on_edmond/atlas_images/N44_atlas_images.txt"                          
 
 
 
