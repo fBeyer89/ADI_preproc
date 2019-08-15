@@ -138,7 +138,9 @@ sink = Node(nio.DataSink(parameterization=True,
                                                                 ('_apply_ants_reg2', 'Hyp_li'),
                                                                 ('_apply_ants_reg1', 'Hyp_re'),
                                                                 ('_apply_ants_reg0', 'anat'),
-                                                                ('_atlas_id_', 'coreg_atlas_')]),
+                                                                ('_atlas_id_', 'coreg_atlas_'),
+                                                                ('_subject_', ''),
+                                                                ('_target_id_','')]),
                                                                  name='sink')
 
 

@@ -25,6 +25,7 @@ To perform the steps described in **Algorithm**:
 - activate python environment nip_agewell (saved in /data/pt_02161/scripts/hypothalamus_project/environment_for_hyp_seg.yml)
 
 Step 1, 2, 3: 
+- run ./environment.sh to enable FREESURFER and ANTS environment + rsenv saved in rsenv_for_labelpropagation.yml)
 **labelpropagation/labelpropagation.py**
 - runs all registration steps and label propagation in parallel.
 - helper functions (don't modify anything here) are
@@ -32,7 +33,8 @@ Step 1, 2, 3:
 	quick_registration.py
 	ants_registration_wf_parallel.py
 
-Step 4.: 
+Step 4.:
+- run ./environment.sh to enable FREESURFER and ANTS environment + nip_agewell saved in environment_for_hyp_seg.yml)
 **/fusion/runstaple.py**
 - merges hypothalamic segmentations and anatomical images that were propagated from atlas images to target space
 - merges binarized hypothalamic segmentations from all atlas images with the STEPS algorithm implemented in NiftySeg (https://github.com/KCL-BMEIS/NiftySeg/tree/master/seg-apps), wrapped in nipype (https://nipype.readthedocs.io/en/latest/interfaces/generated/interfaces.niftyseg/label_fusion.html#labelfusion)
