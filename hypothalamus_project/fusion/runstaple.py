@@ -41,9 +41,9 @@ targetsubjects=["ADI014_fu"]
 
 def create_regexp(subject, image_type, side):
     if image_type=="hyp":
-            regex='preprocessed/hypothalamus/_subject_%s/_target_id_%s/coreg_atlas_.+/Hyp_%s/.+_hyp_%s_swapped_RAS_trans.nii.gz' %(subject, subject, side, side)
+            regex='preprocessed/hypothalamus/preprocessing/warped/%s/%s/coreg_atlas_*/Hyp_%s/*_hyp_%s_swapped_RAS_trans.nii.gz' %(subject, subject, side, side)
     else:
-            regex='preprocessed/hypothalamus/_subject_%s/_target_id_%s/coreg_atlas_.+/anat/.+_MPRAGE_t1_reorient_16bit_acpc_noz0_skullstrippedRepaired_trans.nii.gz' %(subject, subject)
+            regex='preprocessed/hypothalamus/preprocessing/warped/%s/%s/coreg_atlas_*/anat/*_MPRAGE_t1_reorient_16bit_acpc_noz0_skullstrippedRepaired_trans.nii.gz' %(subject, subject)
     return regex
 
 regexp_anat=Node(util.Function(input_names=['subject', "image_type", "side"], 
@@ -53,20 +53,21 @@ regexp_anat.inputs.image_type="anat"
 regexp_anat.inputs.side="xx"
 regexp_anat.iterables=[("subject", targetsubjects)]
 
-mergelist_anat=Node(interface=DataFinder(), name="mergelist_anat")
-mergelist_anat.inputs.root_paths=data_dir
 
-
-###########################################################################
 regexp_hyp=Node(util.Function(input_names=['subject', "image_type", "side"], 
                             output_names=['regex'],
                             function = create_regexp), name="regexp_hyp")  
 regexp_hyp.inputs.image_type="hyp"
 regexp_hyp.iterables=[("subject", targetsubjects),('side', ['re', 'li'])]
 
-mergelist_hyp=Node(interface=DataFinder(), name="mergelist_hyp")
-mergelist_hyp.inputs.root_paths=data_dir
 
+datasource_anat = Node(nio.DataGrabber(sort_filelist = True), name='datasource_anat')
+datasource_anat.inputs.base_directory = data_dir
+
+datasource_hyp = Node(nio.DataGrabber(sort_filelist = True), name='datasource_hyp')
+datasource_hyp.inputs.base_directory = data_dir
+
+###########################################################################
 merge_anat=Node(fsl.Merge(dimension='t'), name="merge_anat")
 merge_hyp=Node(fsl.Merge(dimension='t'), name="merge_hyp")
 
@@ -79,7 +80,7 @@ staple_wf.config['execution']['crashdump_dir'] = staple_wf.base_dir + "/crash_fi
 
 
 info = dict(
-    orig=[['wd/labelpropagation/_subject_', 'subject', '/_target_id_', 'subject', '/mri_convert/brainmask_out.nii.gz']]   
+    orig=[['preprocessed/hypothalamus/preprocessing/orig/', 'subject', '/', 'subject', '/brainmask_out.nii.gz']]   
     )
 
 datasource = Node(
@@ -103,33 +104,31 @@ staple.inputs.sm_ranking='LNCC'
 
 	
 sink = Node(nio.DataSink(parameterization=True,
-base_directory=out_dir,substitutions=[('_staple0', 'steps'),('_staple1','staple'), \
+base_directory=out_dir,substitutions=[
 ('lh_merged_maths_maths_steps','lh_hyp_steps'), \
 ('rh_merged_maths_maths_steps','rh_hyp_steps'), \
 ('lh_merged_maths_maths_staple','lh_hyp_staple'), \
 ('rh_merged_maths_maths_staple','rh_hyp_staple'), \
-('_template_num_10','atlas_n10'),\
-('_template_num_43','atlas_n43'),\
 ('_hemi_lh_','lh_'),\
 ('_hemi_rh_','rh_'),\
 ('subject_', ''),\
 ('subj1_', ''),\
 ('_side_',''), \
-('_staple0', 'steps'),('_staple1','staple'), \
+('_staple0', 'staple'),('_staple1','staple'), \
 ('_swapped_RAS_trans_merged_maths_staple','')]),
 name='sink')
 
 
 staple_wf.connect([
-(regexp_anat, mergelist_anat, [('regex', 'match_regex')]),
-(mergelist_anat, merge_anat, [('out_paths', 'in_files')]),
-(regexp_hyp, mergelist_hyp, [('regex', 'match_regex')]),
-(mergelist_hyp, merge_hyp, [('out_paths', 'in_files')]),
+(regexp_anat, datasource_anat, [('regex', 'template')]),
+(datasource_anat, merge_anat, [('outfiles', 'in_files')]),
+(regexp_hyp, datasource_hyp, [('regex', 'template')]),
+(datasource_hyp, merge_hyp, [('outfiles', 'in_files')]),
 (merge_hyp, bin_hyp, [('merged_file', 'in_file')]),
 (bin_hyp, staple, [('out_file', 'in_file')]),
 (datasource, staple, [('orig','file_to_seg')]),
 (merge_anat, staple, [('merged_file','template_file')]),
-(staple, sink, [('out_file', 'staple.out_label')])
+(staple, sink, [('out_file', 'preprocessing.staple.out_label')])
 ])
 
 staple_wf.run(plugin='MultiProc')#plugin='CondorDAGMan')#plugin='MultiProc') #)#)#

@@ -161,11 +161,12 @@ labelpropagation.connect(
 (datasource, warp, [('atlas_warp2template', 'inputnode.atlas_warp2template')]),
 (normalize_to_template, warp, [('outputnode.inverse_composite', 'inputnode.template2target_inverse')]),
 (quickreg, warp, [('outputnode.composite','inputnode.atlas2target_composite')]),
-(quickreg, sink, [('outputnode.composite','atlas2target_warps.@composite')]), 
-(quickreg,sink, [('outputnode.inverse_composite', 'atlas2target_warps.@inverse')]),
-(normalize_to_template,sink, [('outputnode.inverse_composite', 'target2template_warps.@inverse')]),
-(normalize_to_template,sink, [('outputnode.composite', 'target2template_warps.@composite')]),
-(warp, sink, [('outputnode.ants_reg','@reg')])  
+(quickreg, sink, [('outputnode.composite','preprocessing.atlas2target_warps.@composite')]), 
+(quickreg,sink, [('outputnode.inverse_composite', 'preprocessing.atlas2target_warps.@inverse')]),
+(normalize_to_template,sink, [('outputnode.inverse_composite', 'preprocessing.target2template_warps.@inverse')]),
+(normalize_to_template,sink, [('outputnode.composite', 'preprocessing.target2template_warps.@composite')]),
+(warp, sink, [('outputnode.ants_reg','preprocessing.warped')]),
+(mri_convert, sink, [('out_file', 'preprocessing.orig')])
  ])
  
  

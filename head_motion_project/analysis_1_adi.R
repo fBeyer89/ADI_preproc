@@ -1,6 +1,8 @@
 library(lme4)
 library(tidyr)
 library(haven)
+library(dplyr)
+library(psych)
 source('/a/share/gr_agingandobesity/literature/methods/statistics/linear_models_course_rogermundry_2018/functions/glmm_stability.r')
 
 subj=read.csv("/data/pt_02161/projects/headmotion/lists/ADI_restingstate.csv")
@@ -13,20 +15,21 @@ subj$ID
 #get BMI data
 adi_data=read_sav("/data/p_02161/ADI_studie/metadata/Daten ADI aktuell.sav")
 #only bmi
-bmi=adi_data[,c("ADI_Code","BMI_BL", "BMI_6m", "BMI_12m")]
+bmi=adi_data[,c("ADI_Code","BMI_BL", "BMI_6m", "BMI_12m", "Sex", "Age_BL","Age_6m", "Age_12m", "Educa_BL" )]
 bmi$subj.ID=gsub("-", "",bmi$ADI_Code)
 
 #BMI from other table
 bmi2=read.csv("/data/p_02161/ADI_studie/metadata/ADI_MRT_Messueberblick_2019_04_10.csv",na.strings=c("","NA"),stringsAsFactors = FALSE)
-tmp=bmi2[,c("X.1","BMI","X.2", "BMI.1","X.3","BMI.2")]
+tmp=bmi2[,c("X.1","BMI","X.2", "BMI.1","X.3","BMI.2", "Geschlecht", "Alter")]
 
 
 tmp$subj.ID = tmp$X.1  # your new merged column start with x
 tmp$subj.ID[!is.na(tmp$X.2)] = tmp$X.2[!is.na(tmp$X.2)]  # merge with y
 tmp$subj.ID[!is.na(tmp$X.3)] = tmp$X.3[!is.na(tmp$X.3)]  # merge with y
 
-tmp=tmp[,c("subj.ID","BMI","BMI.1","BMI.2")]
+tmp=tmp[,c("subj.ID","BMI","BMI.1","BMI.2","Geschlecht", "Alter")]
 
+#replace some missing BMI values
 abmi=merge(tmp,bmi,by="subj.ID", all=TRUE)
 abmi$BMI_BL[is.na(abmi$BMI_BL)]=abmi$BMI[is.na(abmi$BMI_BL)]
 abmi$BMI_6m[is.na(abmi$BMI_6m)]=abmi$BMI.1[is.na(abmi$BMI_6m)]
@@ -42,18 +45,11 @@ data=data.frame(subj$ID,res, subj$condition)
 
 data[data==0]=NA
 
-###check that correct number of subjects are available
-length(data[!is.na(data$meanFD_bl),"subj.ID"])
-length(data[!is.na(data$meanFD_fu),"subj.ID"])
-length(data[!is.na(data$meanFD_fu2),"subj.ID"])
-
 #merge data with bmi
 data=merge(data,abmi, by = "subj.ID", all.x=TRUE)
 
 ##missing BMI data of some participants
 data[is.na(data$BMI_BL),"subj.ID"]
-
-
 
 ldata <- data %>% gather(tp, meanFD, meanFD_bl,meanFD_fu, meanFD_fu2) %>% separate(tp, c("measure", "tp"))
 
@@ -61,14 +57,57 @@ lldata <-data  %>% gather(tp, maxFD, maxFD_bl,maxFD_fu, maxFD_fu2) %>% separate(
 
 lbmi <- data %>% gather(tp, BMI, BMI_BL, BMI_6m, BMI_12m) #%>% separate(tp, c("measure", "tp"))
 
-
+#Could also reshape like this.
+#dat <- reshape(dat, varying=c('measure.1', 'measure.2', 'measure.3', 'measure.4'), 
+#               idvar='subject.id', direction='long')
 
 #combine both
-fdata=data.frame(lldata$subj.ID,lldata$tp, lldata$subj.condition, ldata$meanFD, lldata$maxFD, lbmi$BMI)
-colnames(fdata)=c("subj.ID", "tp", "condition", "meanFD", "maxFD", "BMI")
+fdata=data.frame(lldata$subj.ID,lldata$tp, lldata$subj.condition,lldata$Geschlecht, lldata$Alter, lldata$Educa_BL, ldata$meanFD, lldata$maxFD, lbmi$BMI)
+colnames(fdata)=c("subj.ID", "tp", "condition", "sex", "Age_bl", "Educa_BL", "meanFD", "maxFD", "BMI")
 
 
 fdata$logmeanFD=log10(fdata$meanFD)
+fdata$condition=relevel(fdata$condition, "KG")
+
+##DEMOGRAPHICS
+#NUMBER of individuals
+length(levels(fdata$subj.ID))
+
+t=fdata[fdata$tp=="bl",]
+
+t[t$subj.ID=="ADI095","BMI"]=fdata[fdata$subj.ID=="ADI095"&fdata$tp=="fu","BMI"]
+
+#distribution of individuals into groups
+table(fdata[unique(fdata$subj.ID),"condition"])
+
+
+d.summary.extended <- t %>%
+  select(Age_bl, Educa_BL, BMI, condition, sex) %>%
+  group_by (condition,sex) %>%
+  summarise_each(funs(n=n())) %>%
+  print()
+
+d.summary.extended <- t %>%
+  select(Age_bl, BMI, Educa_BL,condition) %>%
+  group_by (condition) %>%
+  summarise_each(funs(mean=mean, median=median, sd=sd, n=n())) %>%
+  print()
+
+
+
+###check that correct number of subjects are available
+length(data[!is.na(data$meanFD_bl),"subj.ID"])
+length(data[!is.na(data$meanFD_fu),"subj.ID"])
+length(data[!is.na(data$meanFD_fu2),"subj.ID"])
+##how many complete cases are there for control and intervention group?
+
+
+
+cc=data[complete.cases(data),]
+table(cc$subj.condition)
+nrow(cc)
+#IG-> 11
+#KG-> 10
 
 ###MAIN ANALYSIS
 
@@ -90,7 +129,7 @@ m.stab=glmm.model.stab(model.res=R1, contr=contr)#model stability
 m.stab$detailed$warnings #no warnings
 m.stab$summary
 
-Null = lmer(logmeanFD ~ tp + (1|subj.ID), data=fdata)
+Null = lmer(logmeanFD ~ tp + condition + (1|subj.ID), data=fdata)
 anova(R1,Null,test="Chisq")
 
 #plot the result 
@@ -101,13 +140,23 @@ p
 
 #spaghetti plot of individual subjects
 tspag = ggplot(fdata, aes(x=tp, y=logmeanFD,group=subj.ID)) + 
-  geom_line(aes(color=subj.ID)) + guides(colour=TRUE)
+  geom_line(aes(color=subj.ID)) + geom_point(aes(color=subj.ID)) +guides(colour=TRUE)
 tspag + theme(axis.text=element_text(size=10),axis.title=element_text(size=12),strip.text = element_text(size=12),legend.position="none")
+
+tspag = ggplot(fdata, aes(x=tp, y=logmeanFD,group=subj.ID)) + 
+  geom_line(aes(color=subj.ID)) + 
+  geom_point(aes(color=subj.ID))+ 
+  facet_grid(. ~ condition)+ guides(colour=TRUE)
+tspag + theme(axis.text=element_text(size=10),axis.title=element_text(size=12),strip.text = element_text(size=12),legend.position="none")
+
 
 #with BMI loss
 tspag = ggplot(fdata, aes(x=BMI, y=logmeanFD,group=subj.ID)) + 
-  geom_line(aes(color=subj.ID)) + guides(colour=TRUE)
-tspag + theme(axis.text=element_text(size=10),axis.title=element_text(size=12),strip.text = element_text(size=12),legend.position="none")
+  geom_line(aes(color=subj.ID))+ 
+  geom_point(aes(color=subj.ID, shape=tp, size=0.0001, alpha = 0.5))+ 
+  facet_grid(. ~ condition) + 
+  guides(color = FALSE, alpha=FALSE, size=FALSE)
+tspag + theme(axis.text=element_text(size=10),axis.title=element_text(size=12),strip.text = element_text(size=12),legend.position="top")
 
 #for intervention group only
 tspag = ggplot(fdata[fdata$condition=="IG",], aes(x=BMI, y=logmeanFD,group=subj.ID)) + 
@@ -148,11 +197,7 @@ tspag + theme(axis.text=element_text(size=10),
 
 # -> reduced head motion in the intervention compared to control group!!!
 
-##how many complete cases are there for control and intervention group?
-cc=data[complete.cases(data),]
-nrow(cc)
-#IG-> 11
-#KG-> 10
+
 
 #We will perform a more detailed analysis to disentangle the contributions of 
 #within- and between-subject BMI variation. 
