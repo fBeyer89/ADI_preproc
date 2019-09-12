@@ -134,7 +134,7 @@ def calc_frame_displacement(realignment_parameters_file, parameter_source):
 
 
 
-def make_the_plot(func, seg, tr, fd_thres, outliers, dvars, fd, subj, outfile):
+def make_the_plot(func_min, func_cc_gsr, func_cc, seg, tr, fd_thres, outliers, dvars, fd, subj, outfile):
     import nibabel as nb
     import scipy.io as sio
     import numpy as np
@@ -204,11 +204,12 @@ def make_the_plot(func, seg, tr, fd_thres, outliers, dvars, fd, subj, outfile):
     
  
     nconfounds=len(confounds)
-    nrows=1+nconfounds #number of confounds + carpet plot
+    ncarpet=3
+    nrows=ncarpet+nconfounds #number of confounds + three carpet plots of preprocessing
     
     # Create grid
     grid = mgs.GridSpec(nrows, 1, wspace=0.0, hspace=0.05,
-                        height_ratios=[1] * (nrows - 1) + [5])
+                        height_ratios=[1] * nconfounds + [3]*ncarpet)
     
     grid_id = 0
     
@@ -224,16 +225,15 @@ def make_the_plot(func, seg, tr, fd_thres, outliers, dvars, fd, subj, outfile):
         grid_id += 1
         
           
-    
-    plot_carpet(func, seg_data, lut=lut, subplot=grid[-1], tr=2)
-    
-    
+    plot_carpet(func_min, seg_data, lut=lut, subplot=grid[-3], tr=2)
+    plot_carpet(func_cc, seg_data, lut=lut, subplot=grid[-2], tr=2)
+    plot_carpet(func_cc_gsr, seg_data, lut=lut, subplot=grid[-1], tr=2)
 
     fn=os.getcwd()+'/'+outfile
-    figure = plt.gcf()
-    #plt.show()
-    figure.savefig(fn, bbox_inches='tight')
-    plt.close(figure)
+    #figure = plt.gcf()
+    plt.show()
+    #figure.savefig(fn, bbox_inches='tight')
+    #plt.close(figure)
     return fn, fn_pd
 
 def get_aseg(in_list):

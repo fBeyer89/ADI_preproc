@@ -1,9 +1,9 @@
 #run freesurfer quality checks according to 
 #Klapwijk: Qoala-T: A supervised-learning tool for quality control of FreeSurfer segmented MRI data
 SUBJECTS_DIR="/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer"
-for subj in ADI009_fu2
+for subj in ADI140
 do
-view="tkmedit $subj brainmask.mgz -surfs -aux wm.mgz"
+view="tkmedit ${subj}_bl.long.$subj brainmask.mgz -surfs -aux wm.mgz"
 eval $view
 
 done

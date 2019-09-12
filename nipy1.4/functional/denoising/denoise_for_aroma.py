@@ -16,8 +16,6 @@ import nipype.algorithms.confounds as conf
 
 '''
 Main workflow for denoising
-Largely based on https://github.com/nipy/nipype/blob/master/examples/
-rsfmri_vol_surface_preprocessing_nipy.py#L261
 use denoising in functional space (project csf/wm mask to functional)
 only regress wm+csf compcor-components (not motion components)
 using highpass instead of bandpassfiltering and no normalization of timeseries
@@ -129,7 +127,8 @@ def create_denoise_pipeline(name='denoise'):
                      (inputnode, filter2, [('brain_mask', 'mask')]),
                      (filter2, outputnode, [('out_f', 'comp_F'),
                                             ('out_pf', 'comp_pF'),
-                                            ('out_file', 'out_betas')
+                                            ('out_file', 'out_betas'),
+                                            ('out_res', 'ts_fullspectrum'),
                                             ])
                      ])
 
@@ -152,8 +151,7 @@ def create_denoise_pipeline(name='denoise'):
                            name='highpass_filter', iterfield=['in_file'])
     highpass_filter.plugin_args = {'submit_specs': 'request_memory = 17000'}
     denoise.connect([(calc_s, highpass_filter, [('sigma', 'highpass_sigma')]),
-                     (filter2, highpass_filter, [('out_file', 'in_file')]),
-                     (filter2, outputnode, [('out_file', 'ts_fullspectrum')]),
+                     (filter2, highpass_filter, [('out_res', 'in_file')]),
                      (highpass_filter, outputnode, [('out_file', 'ts_filtered')])
                      ])
     

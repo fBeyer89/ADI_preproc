@@ -65,7 +65,7 @@ def create_resting():
     name='inputnode')   
     
     
-    #Use correct subject ID
+    #Use correct subject ID from long timepoint for bbregister
     def change_subject_id(subject):
         import re
         [subj,ses]=re.split("_", subject)
@@ -138,8 +138,9 @@ def create_resting():
     (inputnode, remove_vol, [('vol_to_remove', 't_min')]),
     (inputnode, moco, [('anat_brain_mask', 'inputnode.brainmask')]),
     (remove_vol, moco, [('out_file', 'inputnode.epi')]),
-    (inputnode, fmap_coreg,[('subject_id','inputnode.fs_subject_id'),
-                            ('rs_mag', 'inputnode.mag'),
+    (inputnode, change_subject_id, [('subject_id','subject')]),
+    (change_subject_id, fmap_coreg,[('new_subject_id','inputnode.fs_subject_id')]),
+    (inputnode, fmap_coreg, [('rs_mag', 'inputnode.mag'),
                             ('rs_ph', 'inputnode.phase'),
                             ('freesurfer_dir','inputnode.fs_subjects_dir'),                             
                             ('echo_space','inputnode.echo_space'),

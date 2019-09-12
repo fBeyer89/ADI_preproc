@@ -6,16 +6,14 @@
 SUBJECTS_DIR="/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer"
 
 
-for subj in ADI089 #ADI118 # #
+for subj in ADI047 ADI053 ADI088
+
 #
 
-
-
-
-
-
-#running: ADI003 ADI004 ADI005 ADI007 ADI008 ADI026 ADI032
-#running ADI016 ADI020 ADI140 
+#running: ADI003 ADI004 ADI006 ADI008 ADI013 ADI025 ADI026 ADI029 ADI032 ADI033 ADI036
+#running: ADI068 ADI069 ADI072 ADI080 ADI082 ADI087 ADI088 ADI089 ADI091
+#done: ADI041 ADI045 ADI046 ADI047 ADI048 ADI049 ADI050 ADI053 ADI061 ADI062 ADI063 ADI064 
+#running: ADI097 ADI102 ADI107 ADI111 ADI116 ADI124 ADI139 ADI140 
 
 
 do
@@ -39,7 +37,7 @@ elif [ -d ${SUBJECTS_DIR}/${subj}_fu -a -d ${SUBJECTS_DIR}/${subj}_fu2 ];
 then
 echo "two timepoints fu + fu2"
 recon-all -long ${subj}_fu ${subj} -all
-recon-all -long ${subj}_fu2 ${subj} -all
+#recon-all -long ${subj}_fu2 ${subj} -all
 
 elif [ -d ${SUBJECTS_DIR}/${subj}_bl -a -d ${SUBJECTS_DIR}/${subj}_fu2 ];
 then

@@ -7,7 +7,7 @@ from interfaces import *
 #interfaces_ADI049
 from config import *
 from util import *
-from bids_conversion import *
+
 
 class HCPrepWorkflow(pe.Workflow):
     def __init__(self, config=None, base_dir=None, *args, **kwargs):
@@ -42,7 +42,6 @@ class HCPrepWorkflow(pe.Workflow):
         standard = self.get_conf("templates","t1_template_2mm")  
         standard_downsampled = self.get_conf("templates","t1_template_3mm")  
         outputdir=self.get_conf("general", "outputdir")
-        bids_outputdir=self.get_conf("general", "bids_outputdir")
         vol_to_remove=self.get_conf("rspreproc","vol_to_remove")
         epi_resolution=self.get_conf("rspreproc","epi_resolution")
         highpass_freq=self.get_conf("rspreproc","highpass_freq")
@@ -53,12 +52,9 @@ class HCPrepWorkflow(pe.Workflow):
             self.dicom_grabber.inputs.base_directory = sub_dir
         if dcm_temp:
             self.dicom_grabber.inputs.field_template = {"dicom": dcm_temp}  
-        if bids_outputdir:
-            self.bids.inputs.bids_output=bids_outputdir
         if fs_dir:
             self.structural_wf.inputs.inputnode.freesurfer_dir=fs_dir
             self.resting.inputs.inputnode.freesurfer_dir=fs_dir
-            #self.dwi_wf.inputs.inputnode.freesurfer_dir=fs_dir
         if out_dir:
             self.structural_wf.inputs.inputnode.out_dir=out_dir
             self.resting.inputs.inputnode.out_dir=out_dir
@@ -121,10 +117,7 @@ class HCPrepWorkflow(pe.Workflow):
             (self.dicom_grabber, self.dicom_convert, [("dicom", "source_names")]),
             (self.dicom_grabber, self.dicom_info, [("dicom", "files")]),
             (self.dicom_convert, self.nii_wrangler, [("converted_files", "nii_files")]),                  
-            (self.dicom_info, self.nii_wrangler, [("info", "dicom_info")]),
-            (self.nii_wrangler, self.bids, [('dicom_info', 'dicom_info')]),
-            (self.dicom_convert, self.bids, [('bids', 'bids_info')]),  
-            (self.subjects_node,self.bids, [('subject', 'subj')]),     
+            (self.dicom_info, self.nii_wrangler, [("info", "dicom_info")]),     
             (self.nii_wrangler, self.data_sink, [("t1", "nifti.@t1")]), 
             (self.nii_wrangler, self.data_sink, [("rsfmri", "nifti.@rsfmri")]), 
             (self.nii_wrangler, self.data_sink, [("rs_mag", "nifti.@rs_mag")]),       
@@ -134,12 +127,10 @@ class HCPrepWorkflow(pe.Workflow):
             (self.nii_wrangler, self.data_sink, [("dwi_mag", "nifti.@dwi_mag")]),  
             (self.nii_wrangler, self.data_sink, [("dwi_ph", "nifti.@dwi_ph")]), 
             (self.dicom_convert, self.data_sink, [("bvals", "nifti.@bval")]),
-            (self.dicom_convert, self.data_sink, [("bvecs", "nifti.@bvecs")]),
-            (self.dicom_convert, self.data_sink, [("bids", "nifti.@bids")]),    
+            (self.dicom_convert, self.data_sink, [("bvecs", "nifti.@bvecs")]),  
             (self.nii_wrangler, self.data_sink, [("flair", "nifti.@flair")]),
             
-            #structural workflow
-            (self.nii_wrangler, self.structural_wf, [("t1", "inputnode.anat")]),           
+            #structural workflow        
             (self.subjects_node, self.structural_wf, [("subject", "inputnode.subject")]),
             (self.structural_wf, self.data_sink, [('outputnode.brain', 'structural.@brain')]),
             (self.structural_wf, self.data_sink, [('outputnode.anat_head', 'structural.@anat_head')]),
@@ -147,45 +138,11 @@ class HCPrepWorkflow(pe.Workflow):
             (self.structural_wf, self.data_sink, [('outputnode.anat2std', 'structural.@anat2std')]),
             (self.structural_wf, self.data_sink, [('outputnode.anat2std_transforms', 'structural.@anat2std_transforms')]),
             (self.structural_wf, self.data_sink, [('outputnode.std2anat_transforms', 'structural.@std2anat_transforms')]),
-            
-            #diffusion workflow
-#            (self.subjects_node,self.dwi_wf, [("subject", "inputnode.subject_id")]),
-#            (self.structural_wf, self.dwi_wf, [("outputnode.subject_id", "inputnode.subject_id")]),
-#            (self.nii_wrangler, self.dwi_wf, [("dwi", "inputnode.dwi")]),
-#            (self.nii_wrangler, self.dwi_wf, [("dwi_b0", "inputnode.dwi_b0")]),
-#            (self.nii_wrangler, self.dwi_wf, [("dwi_mag", "inputnode.dwi_mag")]),
-#            (self.nii_wrangler, self.dwi_wf, [("dwi_ph", "inputnode.dwi_ph")]),
-#            (self.nii_wrangler, self.dwi_wf, [("ep_dwi_dwelltime", "inputnode.dwi_dwelltime")]),
-#            (self.nii_wrangler, self.dwi_wf, [("ep_dwi_fieldmap_te", "inputnode.te_diff")]),
-#            (self.bids, self.dwi_wf, [("bval_file", "inputnode.bvals")]),
-#            (self.bids, self.dwi_wf, [("bvec_file", "inputnode.bvecs")]),  
-#            (self.dwi_wf, self.data_sink, [('outputnode.dwi_denoised', 'diffusion.@dwi_denoised')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.fmap', 'diffusion.@fmap')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.bo_brainmask', 'diffusion.@bo_brainmask')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.bo_brain', 'diffusion.@bo_brain')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.rotated_bvecs', 'diffusion.eddy.@rotated_bvecs')]),
-#    	        (self.dwi_wf, self.data_sink, [('outputnode.eddy_corr', 'diffusion.eddy.@eddy_corr')]),
-#	        (self.dwi_wf, self.data_sink, [('outputnode.total_movement_rms', 'diffusion.eddy.@total_movement_rms')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.cnr_maps', 'diffusion.eddy.@cnr_maps')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.residuals', 'diffusion.eddy.@residuals')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.shell_params', 'diffusion.eddy.@shell_params')]),
-#	        (self.dwi_wf, self.data_sink, [('outputnode.outlier_report', 'diffusion.eddy.@outlier_report')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.eddy_params', 'diffusion.eddy.@eddy_params')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_fa', 'diffusion.dti.@dti_fa')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_md', 'diffusion.dti.@dti_md')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_l1', 'diffusion.dti.@dti_l1')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_l2', 'diffusion.dti.@dti_l2')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_l3', 'diffusion.dti.@dti_l3')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_v1', 'diffusion.dti.@dti_v1')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_v2', 'diffusion.dti.@dti_v2')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.dti_v3', 'diffusion.dti.@dti_v3')]),
-#            (self.dwi_wf, self.data_sink, [('outputnode.fa2anat', 'diffusion.dti.@fa2anat')]),
-#	        (self.dwi_wf, self.data_sink, [('outputnode.fa2anat_dat', 'diffusion.dti.@fa2anat_dat')]),
-#	        (self.dwi_wf, self.data_sink, [('outputnode.fa2anat_mat', 'diffusion.dti.@fa2anat_mat')]),
-#                        
+                                    
 #            #functional
-            #(self.subjects_node,self.resting, [("subject", "inputnode.subject_id")]),
-            (self.structural_wf, self.resting, [("outputnode.subject_id", "inputnode.subject_id")]),
+             #use the ADIxxx_timepoint name for processing rs & decouple the two processes as FS is already finished.
+            (self.subjects_node,self.resting, [("subject", "inputnode.subject_id")]),
+            #(self.structural_wf, self.resting, [("outputnode.subject_id", "inputnode.subject_id")]),
             (self.nii_wrangler, self.resting, [("rsfmri", "inputnode.func")]),    
             (self.nii_wrangler, self.resting, [("rs_mag", "inputnode.rs_mag")]), 
             (self.nii_wrangler, self.resting, [("rs_ph", "inputnode.rs_ph")]),
@@ -282,19 +239,6 @@ class HCPrepWorkflow(pe.Workflow):
         self._dicom_info = val
         
     @property
-    def bids(self):
-        from bids_conversion import create_bids
-        if not getattr(self,'_bids',None):
-               self._bids = pe.Node(name="bids", interface=Function(
-                           input_names=["dicom_info","bids_info","bids_output","subj"],
-                           output_names=["bval_file", "bvec_file"],
-                           function=create_bids))
-        return self._bids
-    @bids.setter
-    def bids(self, val):
-        self._bids = val
-
-    @property
     def nii_wrangler(self):
         if not getattr(self,'_nii_wrangler',None):
             self._nii_wrangler = pe.Node(name="nii_wrangler", interface=NiiWrangler())
@@ -305,7 +249,7 @@ class HCPrepWorkflow(pe.Workflow):
         
     @property
     def structural_wf(self):
-        from structural.structural import create_structural
+        from structural.structural_long import create_structural
         if not getattr(self,'_structural_wf',None):
             self._structural_wf = create_structural()
         return self._structural_wf
@@ -315,24 +259,13 @@ class HCPrepWorkflow(pe.Workflow):
 
     @property
     def resting(self):
-        from functional.aroma_resting import create_resting
+        from functional.aroma_resting_long import create_resting
         if not getattr(self,'_resting',None):
             self._resting = create_resting()
         return self._resting
     @resting.setter
     def resting(self, val):
-        self._resting = val
-       
-    @property
-    def dwi_wf(self):
-        from diffusion.diffusion import create_dti
-        if not getattr(self,'_dwi_wf',None):
-            self._dwi_wf = create_dti()
-        return self._dwi_wf
-    @dwi_wf.setter
-    def dwi_wf(self, val):
-        self._dwi_wf = val
-   
+        self._resting = val 
         
     @property
     def data_sink(self):

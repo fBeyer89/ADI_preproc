@@ -10,7 +10,7 @@ import os
 import sys
 import getopt
 
-from workflow import *
+from workflow_long import *
 help_message = """
 Provides command line tools to build and work on workflow confiuration files,
 and for launching the pipeline using a specific config. You can either import
@@ -131,6 +131,14 @@ def main(argv=None):
             os.makedirs(out_dir)
         #wk.data_sink.inputs.base_directory = out_dir
 
+
+        #change configuration to check only for timestamp
+        from nipype import config
+        cfg = dict(logging=dict(workflow_level = 'DEBUG'),
+           execution={'stop_on_first_crash': False,
+                      'hash_method': 'timestamp'})
+        config.update_config(cfg)
+
         # graph if you like
         if graph:
             g2u = "exec" if verbose else "orig"
@@ -162,7 +170,7 @@ def main(argv=None):
                    plugin_args={"qsub_args":"-l nodes=1:ppn=1,mem=1gb,walltime=1:00:00"})
         elif N_PROCS > 0:
             print "running with %d processes" % N_PROCS
-            wk.run(plugin="MultiProc", plugin_args={"n_procs" : N_PROCS, "non_daemon" : True})
+            wk.run(plugin="MultiProc", plugin_args={"n_procs" : N_PROCS, "non_daemon" : True}, updatehash=False)
         else:
             print "running single process"
             wk.run()

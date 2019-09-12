@@ -31,9 +31,9 @@ def create_rs_qc(subjectlist):
     tr=2.3
 
     # Specify the location of the preprocessed data    
-    data_dir="/data/pt_02161/wd/hcp_prep_workflow/resting/"
+    data_dir="/data/pt_02161/wd/hcp_prep/resting/"
     working_dir="/data/pt_02161/wd/" #MODIFY
-    freesurfer_dir="/data/p_02161/BIDS/derivatives/freesurfer/"
+    freesurfer_dir="/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/"
    
     qc = Workflow(name="qc")
     qc.base_dir = working_dir + '/' 
@@ -46,6 +46,8 @@ def create_rs_qc(subjectlist):
     
     info = dict(
        func=[['transform_timeseries/','_subject_','subj','/merge/rest2anat.nii.gz']],
+       func_compcor_gsr=[['denoise/','_subject_','subj','/filternoise/mapflow/_filternoise0/rest2anat_denoised.nii.gz']],
+       func_compcor=[['denoise/','_subject_','subj','/filternoise/mapflow/_filternoise1/rest2anat_denoised.nii.gz']],
        dvars=[['transform_timeseries/','_subject_','subj','/dvars/rest2anat_dvars.tsv']],
        motpars=[['/motion_correction/','_subject_','subj','/mcflirt/rest_realigned.nii.gz.par']],
        brainmask=[['transform_timeseries/','_subject_','subj','/resample_brain/T1_brain_mask_lowres.nii.gz']])  
@@ -88,7 +90,7 @@ def create_rs_qc(subjectlist):
                        name='outliers', mem_gb=1 * 2.5)
     
     bigplot = Node(util.Function(
-        input_names=['func', 'seg', 'tr', 'fd_thres', 'outliers', 'dvars', 'fd', 'subj','outfile'],
+        input_names=['func_min', 'func_cc_gsr', 'func_cc', 'seg', 'tr', 'fd_thres', 'outliers', 'dvars', 'fd', 'subj','outfile'],
         output_names=['fn', 'dataframe'],
         function=make_the_plot), name="bigplot")
     bigplot.inputs.tr=tr
@@ -115,7 +117,9 @@ def create_rs_qc(subjectlist):
                 (ds_rs, downsample, [('func', 'master')]),
                 (downsample, bigplot, [('out_file', 'seg')]),
                 (ds_rs, calc_fd, [('motpars', 'realignment_parameters_file')]),
-                (ds_rs, bigplot, [('func', 'func')]),
+                (ds_rs, bigplot, [('func', 'func_min')]),
+                (ds_rs, bigplot, [('func_compcor_gsr', 'func_cc_gsr')]),
+                (ds_rs, bigplot, [('func_compcor', 'func_cc')]),
                 (ds_rs, bigplot, [('dvars', 'dvars')]),
                 (calc_fd, bigplot, [('FD_power', 'fd')]),
                 (ds_rs, outliers, [('func', 'in_file')]),
@@ -139,9 +143,12 @@ def create_rs_qc(subjectlist):
 #df=pd.read_table('/data/p_life_raw/scripts/Followup/life_FU_done.txt',header=None)
 #subj=df[0].values[5:]#skip the first 5 in the list.
 
-subj=(['ADI033_bl'])
+subj=(['ADI005_fu2'])
 qc=create_rs_qc(subj)
-#qc.run()    
+#qc.run()  
+
+
+#'ADI003_fu  
    
 
 
