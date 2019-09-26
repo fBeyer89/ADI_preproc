@@ -1,0 +1,6 @@
+mghRead(/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/_fu.long./mri/brainmask.mgz, -1): could not open file
+mghRead(/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/ADI009_fu2.long.ADI009/mri/brainmask.mgz, -1): could not open file
+MRISread(/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/ADI032_bl.long.ADI032/surf/lh.pial): could not open file
+mghRead(/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/ADI033_bl.long.ADI033/mri/brainmask.mgz, -1): could not open file
+mghRead(/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/ADI080_bl.long.ADI080/mri/brainmask.mgz, -1): could not open file
+mghRead(/data/p_02161/ADI_studie/BIDS/derivatives/freesurfer/ADI082_fu.long.ADI082/mri/brainmask.mgz, -1): could not open file
