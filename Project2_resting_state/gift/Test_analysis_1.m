@@ -134,7 +134,7 @@ s3_designMat = 'C:\MATLAB6p5p2\work\Example Subjects\Visuomotor_data\SPM.mat'; %
 %% Method 3 (Uses Regular expressions)
 
 % Input data directory name
-input_directory_name = '/data/pt_02161/preprocessed/gift/';
+input_directory_name = '/data/pt_02161/preprocessed/resting/rest2MNI/';%'/data/pt_02161/preprocessed/gift/';
 
 % Subject directory regular expression. This variable can have nested paths
 % like Sub01_vis\Study1. To match this Sub\w+; Study\w+ regular expression can be used where semi-colon
@@ -143,14 +143,20 @@ subject_dir_regexp = 'ADI*';
 
 % Session directory regular expression. This variable cannot have nested
 % paths. If there are no session directories inside subject directories, leave it as empty.
-session_dir_regexp = '';
+session_dir_regexp = 'aroma';
+
+%for min preproc: 'min_preproc';
 
 % Data file pattern. Use wild card for this and not regular expression.
-data_file_pattern = 'rest2anat_aroma_cc*'; %'rest2anat_trans*';
+data_file_pattern =  'denoised_func_data_nonaggr_trans*';
+
+%for min preproc: 'rest2anat_trans*';
 
 % File numbers to include. Leave it as empty if you want to include all of
 % them.
 file_numbers_to_include = [];
+
+
 
 % SPM stats directory name relative to subject or session directories. Use this only when you specify
 % 'diff_sub_diff_sess' as the value for keyword_designMatrix variable. GIFT
@@ -182,10 +188,10 @@ dummy_scans = 0;
 %%%%%%%% End for Method 4 %%%%%%%%%%%%
 
 %% Enter directory to put results of analysis
-outputDir = '/data/pt_02161/projects/connectivity';
+outputDir = '/data/pt_02161/Results/Project2_resting_state/gift/ica_aroma';
 
 %% Enter Name (Prefix) Of Output Files
-prefix = 'test';
+prefix = 'aroma';
 
 %% Enter location (full file path) of the image file to use as mask
 % or use Default mask which is []
@@ -314,7 +320,7 @@ numOfPC2 = 16;
 % 2 - Scale to Z scores
 % 3 - Normalize spatial maps using the maximum intensity value and multiply timecourses using the maximum intensity value
 % 4 - Scale timecourses using the maximum intensity value and spatial maps using the standard deviation of timecourses
-scaleType = 1;
+scaleType = 0;
 
 
 %% 'Which ICA Algorithm Do You Want To Use';

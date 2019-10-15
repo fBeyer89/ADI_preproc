@@ -57,9 +57,11 @@ def create_rs_qc(subjectlist):
               output_names=["new_subject_id"],
               function = change_subject_id), name="change_subject_id")
     
-    
+
     info = dict(
-       func=[['transform_timeseries/','_subject_','subj','/merge/rest2anat.nii.gz']],
+       func=[['smoothing/','_subject_','subj','/smooth/rest2anat_maths_smooth.nii']],
+       ica_aroma=[['','_subject_','subj','/ica_aroma/out/denoised_func_data_nonaggr.nii.gz']],
+       ica_aroma_aggr=[['','_subject_','subj','/ica_aroma/out/denoised_func_data_aggr.nii.gz']],
        func_compcor_gsr=[['denoise/','_subject_','subj','/filternoise/mapflow/_filternoise0/rest2anat_denoised.nii.gz']],
        func_compcor=[['denoise/','_subject_','subj','/filternoise/mapflow/_filternoise1/rest2anat_denoised.nii.gz']],
        dvars=[['transform_timeseries/','_subject_','subj','/dvars/rest2anat_dvars.tsv']],
@@ -104,7 +106,7 @@ def create_rs_qc(subjectlist):
                        name='outliers', mem_gb=1 * 2.5)
     
     bigplot = Node(util.Function(
-        input_names=['func_min', 'func_cc_gsr', 'func_cc', 'seg', 'tr', 'fd_thres', 'outliers', 'dvars', 'fd', 'subj','outfile'],
+        input_names=['func_min', 'ica_aroma', 'ica_aroma_aggr','func_cc_gsr', 'func_cc', 'seg', 'tr', 'fd_thres', 'outliers', 'dvars', 'fd', 'subj','outfile'],
         output_names=['fn', 'dataframe'],
         function=make_the_plot), name="bigplot")
     bigplot.inputs.tr=tr
@@ -133,6 +135,8 @@ def create_rs_qc(subjectlist):
                 (downsample, bigplot, [('out_file', 'seg')]),
                 (ds_rs, calc_fd, [('motpars', 'realignment_parameters_file')]),
                 (ds_rs, bigplot, [('func', 'func_min')]),
+                (ds_rs, bigplot, [('ica_aroma', 'ica_aroma')]),
+                (ds_rs, bigplot, [('ica_aroma_aggr', 'ica_aroma_aggr')]),
                 (ds_rs, bigplot, [('func_compcor_gsr', 'func_cc_gsr')]),
                 (ds_rs, bigplot, [('func_compcor', 'func_cc')]),
                 (ds_rs, bigplot, [('dvars', 'dvars')]),
@@ -155,8 +159,6 @@ def create_rs_qc(subjectlist):
     return qc
 
 
-#df=pd.read_table('/data/p_life_raw/scripts/Followup/life_FU_done.txt',header=None)
-#subj=df[0].values[5:]#skip the first 5 in the list.
 
 slist="/data/pt_02161/Analysis/Preprocessing/qa/rs_qa/all_ADI_for_rsqc.txt"
                    
@@ -165,7 +167,6 @@ with open(slist, 'r') as f:
 
 subjects=['ADI046_bl']    
 qc=create_rs_qc(subjects)
-#qc.run()  
 
 
 #resting-state QC of those without FS edits:

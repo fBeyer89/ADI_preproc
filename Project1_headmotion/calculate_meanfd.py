@@ -7,6 +7,7 @@ Calculate mean and max FD for ADI Study
 """
 
 import numpy as N
+import pandas as pd
 import os,sys
 import matplotlib.pyplot as plt
 
@@ -45,11 +46,12 @@ def compute_fd(motpars,func):
     return FD
 
 #FOR A list of subjects
-subjects_file="/data/pt_02161/projects/headmotion/lists/subjectlist.txt"
+adi=pd.read_csv("/data/pt_02161/Results/Project1_headmotion/results/subjects_rs.csv")
+subjects_list=adi['x']
 func="fsl" #select preprocessing type: afni, fsl or mat for MATLAB
-with open(subjects_file, 'r') as f:
-    subjects_list = [line.strip() for line in f]
-subjects_list = filter(None,subjects_list)
+#with open(subjects_file, 'r') as f:
+#    subjects_list = [line.strip() for line in f]
+#subjects_list = filter(None,subjects_list)
 
 #Array to store the mean and max FD values for all subjects and timepoints
 summaryFD=N.zeros(shape=(N.size(subjects_list),6))
@@ -80,4 +82,4 @@ for subj in subjects_list:
         j+=2
     i+=1
 print summaryFD
-N.savetxt('/data/pt_02161/projects/headmotion/results/results.csv',summaryFD, delimiter=",")
+N.savetxt('/data/pt_02161/Results/Project1_headmotion/results/summary_FDvals.csv',summaryFD, delimiter=",")

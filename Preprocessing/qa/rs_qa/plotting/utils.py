@@ -134,7 +134,7 @@ def calc_frame_displacement(realignment_parameters_file, parameter_source):
 
 
 
-def make_the_plot(func_min, func_cc_gsr, func_cc, seg, tr, fd_thres, outliers, dvars, fd, subj, outfile):
+def make_the_plot(func_min, ica_aroma, ica_aroma_aggr, func_cc_gsr, func_cc, seg, tr, fd_thres, outliers, dvars, fd, subj, outfile):
     import nibabel as nb
     import scipy.io as sio
     import numpy as np
@@ -163,13 +163,13 @@ def make_the_plot(func_min, func_cc_gsr, func_cc, seg, tr, fd_thres, outliers, d
     'FD': [0.0] + np.loadtxt(fd, skiprows=1, usecols=[0]).tolist(),
     })
 
-    if os.path.isfile('/data/pt_life_restingstate_followup/physio/%s_resp.mat' %(subj)):
-        print("respiration file is present")
-        resp=sio.loadmat('/data/pt_life_restingstate_followup/physio/%s_resp.mat' %(subj))
-        r=resp.get('r')
-        r=r.flatten()
-        r=r[4:]
-        dataframe['resp']=r.tolist()
+    #if os.path.isfile('/data/pt_life_restingstate_followup/physio/%s_resp.mat' %(subj)):
+    #    print("respiration file is present")
+    #    resp=sio.loadmat('/data/pt_life_restingstate_followup/physio/%s_resp.mat' %(subj))
+    #    r=resp.get('r')
+    #    r=r.flatten()
+    #    r=r[4:]
+    #    dataframe['resp']=r.tolist()
     
     fn_pd=os.getcwd()+'/confounds.csv'
     dataframe.to_csv(fn_pd, sep=',',index_col=False)
@@ -202,7 +202,7 @@ def make_the_plot(func_min, func_cc_gsr, func_cc, seg, tr, fd_thres, outliers, d
     
  
     nconfounds=len(confounds)
-    ncarpet=3
+    ncarpet=5
     nrows=ncarpet+nconfounds #number of confounds + three carpet plots of preprocessing
     
     # Create grid
@@ -223,9 +223,11 @@ def make_the_plot(func_min, func_cc_gsr, func_cc, seg, tr, fd_thres, outliers, d
         grid_id += 1
         
           
-    plot_carpet(func_min, seg_data, lut=lut, subplot=grid[-3], tr=2)
-    plot_carpet(func_cc, seg_data, lut=lut, subplot=grid[-2], tr=2)
-    plot_carpet(func_cc_gsr, seg_data, lut=lut, subplot=grid[-1], tr=2)
+    plot_carpet(func_min,seg_data, lut=lut, subplot=grid[-5], tr=2.3) 
+    plot_carpet(ica_aroma,seg_data, lut=lut, subplot=grid[-4], tr=2.3) 
+    plot_carpet(ica_aroma_aggr,seg_data,lut=lut, subplot=grid[-3], tr=2.3) 
+    plot_carpet(func_cc, seg_data, lut=lut, subplot=grid[-2], tr=2.3)
+    plot_carpet(func_cc_gsr, seg_data, lut=lut, subplot=grid[-1], tr=2.3)
 
     fn=os.getcwd()+'/'+outfile
     figure = plt.gcf()

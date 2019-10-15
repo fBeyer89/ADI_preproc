@@ -35,12 +35,12 @@ working_dir="/data/pt_02161/wd"
 slist="/data/pt_02161/Analysis/Preprocessing/qa/rs_qa/all_ADI_for_rsqc.txt"
                    
 standard_brain='/data/p_life_results/2017_beyer_rs_BMI/BMI_RSN_analysis/scripts/network_identification/MNI/MNI_brain_resampled.nii.gz'
-out_dir="/data/pt_02161/preprocessed/resting/detailedQA/"
+out_dir="/data/pt_02161/preprocessed/resting/"
 
 with open(slist, 'r') as f:
     subjects = [line.strip() for line in f]
 
-subjects=['ADI013_fu2']
+#subjects=['ADI013_fu2']
  
 #264 MNI coordinates to calculate functional connectome from
 coords_file=pd.read_csv("/data/pt_02161/Analysis/Preprocessing/qa/rs_qa/calc_connectome/Power_264nodes_MNI.csv",  delimiter=",", header=1)    
@@ -64,12 +64,13 @@ info = dict(
        rest_cc=[['/resting/aroma/','subject','/highpass_compcor/rest_denoised_highpassed.nii']], 
        rest_cc_gsr=[['/resting/aroma/','subject','/highpass_compcor_gsr/rest_denoised_highpassed.nii']], 
        rest=[['/resting/transform_ts/','subject','/rest2anat.nii.gz']],
+       ica_aroma=[['/resting/aroma/','subject','/denoised_func_data_nonaggr.nii.gz']],
        ants_affine=[['/structural/','subject','/transform0GenericAffine.mat']],
        ants_warp=[['/structural/','subject','/transform1Warp.nii.gz']]
        )   
 
 datasource = Node(
-    interface=nio.DataGrabber(infields=['subject'], outfields=['rest_cc', 'rest_cc_gsr', 'rest', 'ants_affine', 'ants_warp']),
+    interface=nio.DataGrabber(infields=['subject'], outfields=['rest_cc', 'rest_cc_gsr', 'rest', 'ica_aroma', 'ants_affine', 'ants_warp']),
     name='datasource')
 datasource.inputs.base_directory = data_dir
 datasource.inputs.template = '%s%s%s' #MODIFY according to your datastructure.
@@ -77,10 +78,10 @@ datasource.inputs.template_args = info
 datasource.inputs.sort_filelist = True   
 datasource.iterables=[("subject", subjects)]
 
-def mklist(rest, rest_cc, rest_cc_gsr):
-    return [rest, rest_cc, rest_cc_gsr]
+def mklist(rest, ica_aroma, rest_cc, rest_cc_gsr):
+    return [rest, ica_aroma, rest_cc, rest_cc_gsr]
 
-make_list = Node(util.Function(input_names = ['rest', 'rest_cc', 'rest_cc_gsr'],
+make_list = Node(util.Function(input_names = ['rest', 'ica_aroma', 'rest_cc', 'rest_cc_gsr'],
                                 output_names = ['rest_list'],
                                 function = mklist),
                     name='make_list') 
@@ -103,19 +104,25 @@ ts_conn.inputs.radius = 5 #5mm sphere because 10mm sphere causes overlap.
 
 #sink to store files
 sink = Node(nio.DataSink(parameterization=True,base_directory=out_dir,
-substitutions=[('_subject_', '')]),
+substitutions=[('_subject_', ''),
+               ('_ants_reg0', 'min_preproc'),
+               ('_ants_reg1', 'aroma'),
+               ('_ants_reg2', 'cc'),
+               ('_ants_reg3', 'gsr')]),
 name='sink')
 
 calc_connectome.connect([
 (datasource, make_list, [('rest', 'rest'),
                          ('rest_cc', 'rest_cc'),
-                         ('rest_cc_gsr', 'rest_cc_gsr')]),
+                         ('rest_cc_gsr', 'rest_cc_gsr'),
+                         ('ica_aroma', 'ica_aroma')]),
 (make_list, ants_registration, [('rest_list', 'inputnode.func')]),
 (datasource, ants_registration, [('ants_affine', 'inputnode.ants_affine')] ),
 (datasource, ants_registration, [('ants_warp', 'inputnode.ants_warp')]),
 (ants_registration, ts_conn, [('outputnode.func_MNI', 'in_file')]),
-(ts_conn, sink, [('fn', 'Power264conn.@connvals')]),
-(ts_conn, sink, [('all_fn_m', 'Power264conn.@connmats')])
+(ts_conn, sink, [('fn', 'detailedQA/Power264conn.@connvals')]),
+(ts_conn, sink, [('all_fn_m', 'detailedQA/Power264conn.@connmats')]),
+(ants_registration, sink, [('outputnode.func_MNI', 'rest2MNI')])
 ])
 
 

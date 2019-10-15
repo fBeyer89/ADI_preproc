@@ -89,8 +89,8 @@ Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from
     * /X/highpass_compcor (highpassed, compcor-regressed data)
     * /X/filter_compcor_gsr (compcor-gsr-regressed data)
     * /X/filter_compcor (compcor-regressed data)
-    * /X/denoised_func_data_nonaggr.nii.gz (non-aggr denoised aroma output)
-    * /X/denoised_func_data_aggr.nii.gz (aggr denoised aroma output, used for further analysis)
+    * /X/denoised_func_data_nonaggr.nii.gz (non-aggr denoised aroma output, used for further analysis)
+    * /X/denoised_func_data_aggr.nii.gz (aggr denoised aroma output)
     * /X/brain_warped.nii (brain warped to MNI during AROMA preprocessing)
     * /X/brain_field.nii (warp field for MNI during AROMA preprocessing)
   * gift
@@ -168,3 +168,4 @@ Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from
 - corrected this and changed run_workflow to use workflow_long and aroma_long. These pipelines use ADIXXX_XX.long.ADI and not the cross-sectional run as base for the functional registration. For this purpose, run_workflow_hcplike.py imports workflow_long.py (without diffusion + BIDS), but operates on the same working directory and output.
 - additionally discovered wrong registration of brain.nii.gz to MNI space in the preparation of AROMA. Therefore included reorient2std-node as a preparatory step for brain.nii.gz but also rs and rs-mask.
 - changed denoising from aggressive to non-aggressive denoising according to Pruim, 2015 but kept WM/CSF/GSR calculation to be done after ICA-AROMA denoising.
+- checked order of segmentation groups by modifying /home/raid1/fbeyer/local_pt_life/miniconda2/envs/py3/lib/python3.5/site-packages/niworkflows/viz/plots.py, l. 190

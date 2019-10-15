@@ -659,7 +659,7 @@ elseif (dataSelMethod == 3)
     % List files with full paths and get the number of time points
     % information
     [files, diffTimePoints] = listFilesWithFullPaths(allDirs, data_file_pattern, file_numbers_to_include, numOfSub, numOfSess);
-    
+
     if strcmpi(modalityType, 'fmri') && strcmpi(spmMatFlag, 'diff_sub_diff_sess')
         
         if isempty(subject_dir_regexp) && isempty(session_dir_regexp)

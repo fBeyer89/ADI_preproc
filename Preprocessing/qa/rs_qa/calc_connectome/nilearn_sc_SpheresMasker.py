@@ -18,8 +18,7 @@ def calc_sc_sphere(in_file, coords, coords_labels ,radius):
                                      memory_level=5, verbose=5)
 
     ndiagonal=np.shape(coords_labels)[1]*(np.shape(coords_labels)[1]-1)/2
-    
-    connvals=np.zeros(shape=(ndiagonal,len(in_file)))  
+    connvals=np.zeros(shape=(int(ndiagonal),len(in_file)))  
     all_fn_m=[]                  
     for i in np.arange(0,len(in_file)):
         #print in_file[i]
@@ -50,7 +49,7 @@ def calc_sc_sphere(in_file, coords, coords_labels ,radius):
             fig = plt.figure(figsize=(10, 7))
             fig.add_subplot(1,1,1)
             plotting.plot_matrix(correlation_matrix, vmin=-1., vmax=1., colorbar=True,
-                     title='Power correlation matrix')
+                     title='')
 
             fn_m=os.getcwd()+'/connmatrix_%i.png' %(i)
             plt.savefig(fn_m)
@@ -62,7 +61,7 @@ def calc_sc_sphere(in_file, coords, coords_labels ,radius):
             print("#####################################################################################")
             print("#####################################################################################") 
     fn=os.getcwd()+'/connvals.txt'
-    np.savetxt(fn, connvals,  delimiter=',', header="connvals_min,connvals_cc,connvals_cc_gsr", newline='\n', fmt='%.5f')
+    np.savetxt(fn, connvals,  delimiter=',', header="connvals_min,connvals_aroma,connvals_cc,connvals_cc_gsr", newline='\n', fmt='%.5f')
     return  fn, all_fn_m
             
    

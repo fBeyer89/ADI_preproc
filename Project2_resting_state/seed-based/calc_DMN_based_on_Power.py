@@ -38,7 +38,7 @@ out_dir="/data/pt_02161/Results/Project2_resting_state/connectivity/"
 
 with open(slist, 'r') as f:
     subjects = [line.strip() for line in f]
-subjects=['ADI046_bl']
+
 #get DMN coordinates to calculate average DMN connectivity
 coords_file=pd.read_csv("/data/pt_02161/Analysis/Project2_resting_state/seed-based/Neuron_consensus_264_Power_2011.csv",  delimiter=",", header=1)    
 DMN_coords=[]
@@ -60,19 +60,16 @@ calc_DMN = Workflow(name='calc_DMN')
 calc_DMN.base_dir = working_dir + '/' 
 calc_DMN.config['execution']['crashdump_dir'] = calc_DMN.base_dir + "/crash_files"
 
-
-#first load functional data + transform parameters to MNI space 
+#first load functional data transformed to MNI space 
 #We evaluated QC-FC relationships within two commonly-used whole-brain networks, the first consisting of spherical nodes distributed across the brain (Power et al., 2011) and the second comprising an areal parcellation of the cerebral cortex (Gordon et al., 2016). For each network, the mean time series for each node was calculated from the denoised residual data, and the pairwise Pearson correlation coefficient between node time series was used as the network edge weight (Biswal et al., 1995). For each edge, we then computed the correlation between the weight of that edge and the mean relative RMS motion. To eliminate the potential influence of demographic factors, QC-FC relationships were calculated as partial correlations that accounted for participant age and sex. We thus obtained, for each de-noising pipeline, a distribution of QC-FC correlations.
 info = dict(
-       rest_cc=[['/resting/aroma/','subject','/highpass_compcor/rest_denoised_highpassed.nii']], 
-       rest_cc_gsr=[['/resting/aroma/','subject','/highpass_compcor_gsr/rest_denoised_highpassed.nii']], 
-       rest=[['/resting/transform_ts/','subject','/rest2anat.nii.gz']],
-       ants_affine=[['/structural/','subject','/transform0GenericAffine.mat']],
-       ants_warp=[['/structural/','subject','/transform1Warp.nii.gz']]
+       rest=[['/resting/rest2MNI/','subject','/min_preproc/rest2anat_trans.nii.gz']], 
+       ica_aroma=[['/resting/rest2MNI/','subject','/ica_aroma/denoised_func_data_nonaggr_trans.nii.gz']],
+       rest_cc=[['/resting/rest2MNI/','subject','/ica_aroma_cc/rest_denoised_highpassed_trans.nii']],
+       rest_cc_gsr=[['/resting/rest2MNI/','subject','/ica_aroma_cc_gsr/rest_denoised_highpassed_trans.nii']],
        )   
-
 datasource = Node(
-    interface=nio.DataGrabber(infields=['subject'], outfields=['rest_cc', 'rest_cc_gsr', 'rest', 'ants_affine', 'ants_warp']),
+    interface=nio.DataGrabber(infields=['subject'], outfields=[ 'rest','ica_aroma','rest_cc','rest_cc_gsr']),
     name='datasource')
 datasource.inputs.base_directory = data_dir
 datasource.inputs.template = '%s%s%s' #MODIFY according to your datastructure.
@@ -80,19 +77,14 @@ datasource.inputs.template_args = info
 datasource.inputs.sort_filelist = True   
 datasource.iterables=[("subject",subjects)]
 
-def mklist(rest, rest_cc, rest_cc_gsr):
-    return [rest, rest_cc, rest_cc_gsr]
+def mklist(rest, ica_aroma, rest_cc, rest_cc_gsr):
+    return [rest, ica_aroma, rest_cc, rest_cc_gsr]
 
-make_list = Node(util.Function(input_names = ['rest', 'rest_cc', 'rest_cc_gsr'],
+make_list = Node(util.Function(input_names = ['rest', 'ica_aroma', 'rest_cc', 'rest_cc_gsr'],
                                 output_names = ['rest_list'],
                                 function = mklist),
                     name='make_list') 
        
-#workflow to tranform functional images to to MNI space
-ants_registration=create_ants_registration_pipeline()
-ants_registration.inputs.inputnode.ref=standard_brain 
-    
-
 # Create the sca_MNI_coords Node, as output nifti file 
 ts_conn = Node(util.Function(input_names = ['in_file', 'coords',
                                                 'coords_labels',
@@ -111,14 +103,12 @@ name='sink')
 
 calc_DMN.connect([
 (datasource, make_list, [('rest', 'rest'),
+                         ('ica_aroma', 'ica_aroma'),
                          ('rest_cc', 'rest_cc'),
                          ('rest_cc_gsr', 'rest_cc_gsr')]),
-(make_list, ants_registration, [('rest_list', 'inputnode.func')]),
-(datasource, ants_registration, [('ants_affine', 'inputnode.ants_affine')] ),
-(datasource, ants_registration, [('ants_warp', 'inputnode.ants_warp')]),
-(ants_registration, ts_conn, [('outputnode.func_MNI', 'in_file')]),
-(ts_conn, sink, [('fn', '@.PowerDMNconn')]),
-(ts_conn, sink, [('all_fn_m', '@.PowerDMNconnmatrices')])
+(make_list, ts_conn, [('rest_list', 'in_file')]),
+(ts_conn, sink, [('fn', 'PowerDMNconn.@vals')]),
+(ts_conn, sink, [('all_fn_m', 'PowerDMNconn.@matrices')])
 ])
 
 

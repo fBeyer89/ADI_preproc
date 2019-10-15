@@ -3,6 +3,7 @@ library(tidyr)
 library(haven)
 library(dplyr)
 library(psych)
+library(ggplot2)
 source('/a/share/gr_agingandobesity/literature/methods/statistics/linear_models_course_rogermundry_2018/functions/glmm_stability.r')
 
 subj=read.csv("/data/pt_02161/projects/headmotion/lists/ADI_restingstate.csv")
@@ -48,6 +49,8 @@ data[data==0]=NA
 #merge data with bmi
 data=merge(data,abmi, by = "subj.ID", all.x=TRUE)
 
+#write data for Kristin Prehn
+#write.csv(data[,c(1,2,4,6)],"/data/pt_02161/projects/headmotion/results/ADI_meanFD.csv")
 ##missing BMI data of some participants
 data[is.na(data$BMI_BL),"subj.ID"]
 
@@ -71,24 +74,33 @@ fdata$condition=relevel(fdata$condition, "KG")
 
 ##DEMOGRAPHICS
 #NUMBER of individuals
-length(levels(fdata$subj.ID))
+#exclude participants with no mean FD values.
+t=fdata[!is.na(fdata$meanFD),]
 
-t=fdata[fdata$tp=="bl",]
-
-t[t$subj.ID=="ADI095","BMI"]=fdata[fdata$subj.ID=="ADI095"&fdata$tp=="fu","BMI"]
+#t[t$subj.ID=="ADI095","BMI"]=fdata[fdata$subj.ID=="ADI095"&fdata$tp=="fu","BMI"]
 
 #distribution of individuals into groups
-table(fdata[unique(fdata$subj.ID),"condition"])
+table(t[unique(t$subj.ID),"condition"])
 
-
-d.summary.extended <- t %>%
+#print distribution characteristics for everybody
+d.summary.extended <- t[unique(t$subj.ID),] %>%
   select(Age_bl, Educa_BL, BMI, condition, sex) %>%
   group_by (condition,sex) %>%
   summarise_each(funs(n=n())) %>%
   print()
 
-d.summary.extended <- t %>%
-  select(Age_bl, BMI, Educa_BL,condition) %>%
+#print age statistics for everybody (as Age is the baseline age in the respective table)
+d.summary.extended <- t[unique(t$subj.ID),] %>%
+  select(Age_bl, Educa_BL,condition) %>%
+  group_by (condition) %>%
+  summarise_each(funs(mean=mean, median=median, sd=sd, n=n())) %>%
+  print()
+
+#print BMI statistics only for those which have BL measurement
+nrow(t[t$tp=="bl",]) #37 have baseline assessment, 13 do only have fu, fu2
+
+d.summary.extended <- t[t$tp=="bl",] %>%
+  select(BMI,condition) %>%
   group_by (condition) %>%
   summarise_each(funs(mean=mean, median=median, sd=sd, n=n())) %>%
   print()
@@ -100,8 +112,6 @@ length(data[!is.na(data$meanFD_bl),"subj.ID"])
 length(data[!is.na(data$meanFD_fu),"subj.ID"])
 length(data[!is.na(data$meanFD_fu2),"subj.ID"])
 ##how many complete cases are there for control and intervention group?
-
-
 
 cc=data[complete.cases(data),]
 table(cc$subj.condition)
@@ -176,6 +186,30 @@ tspag + theme(axis.text=element_text(size=10),axis.title=element_text(size=12),s
 
 length(unique(fdata[fdata$condition=="KG"&!is.na(fdata$logmeanFD)&!is.na(fdata$BMI),"subj.ID"]))
 
+
+tgc <- summarySEwithin(fdata, measurevar="logmeanFD",withinvars="tp",
+                       idvar="subj.ID", betweenvars="condition",na.rm=TRUE, conf.interval=.95)
+
+ggplot(tgc, aes(x=tp, y=logmeanFD, group=condition, color=condition)) +
+  geom_line() +
+  geom_point(aes(x=tp, y=logmeanFD, color=condition, group=condition), data=fdata) +
+  geom_errorbar(width=.1, aes(ymin=logmeanFD-ci, ymax=logmeanFD+ci), data=tgc) +
+  geom_point(shape=21, size=3, fill="white")+
+  xlab("timepoint")+
+  ylab("log(mean FD)")+
+  theme(axis.text=element_text(size=10),
+        axis.title=element_text(size=12),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        strip.text = element_text(size=14),
+        legend.position="top",
+        legend.title = element_text( size = 12),
+        legend.text = element_text( size = 12))
+
+
+
+####################OLD PLOT COMPARING BOTH GROUPS
+##################################################
 #plot comparing both groups
 tspag = ggplot(fdata, aes(x=tp, y=logmeanFD, color=condition, group=condition)) +
         geom_point() +
@@ -197,7 +231,142 @@ tspag + theme(axis.text=element_text(size=10),
 
 # -> reduced head motion in the intervention compared to control group!!!
 
+## Norms the data within specified groups in a data frame; it normalizes each
+## subject (identified by idvar) so that they have the same mean, within each group
+## specified by betweenvars.
+##   data: a data frame.
+##   idvar: the name of a column that identifies each subject (or matched subjects)
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   betweenvars: a vector containing names of columns that are between-subjects variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+normDataWithin <- function(data=NULL, idvar, measurevar, betweenvars=NULL,
+                           na.rm=FALSE, .drop=TRUE) {
+  library(plyr)
+  
+  # Measure var on left, idvar + between vars on right of formula.
+  data.subjMean <- ddply(data, c(idvar, betweenvars), .drop=.drop,
+                         .fun = function(xx, col, na.rm) {
+                           c(subjMean = mean(xx[,col], na.rm=na.rm))
+                         },
+                         measurevar,
+                         na.rm
+  )
+  
+  # Put the subject means with original data
+  data <- merge(data, data.subjMean)
+  
+  # Get the normalized data in a new column
+  measureNormedVar <- paste(measurevar, "_norm", sep="")
+  data[,measureNormedVar] <- data[,measurevar] - data[,"subjMean"] +
+    mean(data[,measurevar], na.rm=na.rm)
+  
+  # Remove this subject mean column
+  data$subjMean <- NULL
+  
+  return(data)
+}
 
+## Summarizes data, handling within-subjects variables by removing inter-subject variability.
+## It will still work if there are no within-S variables.
+## Gives count, un-normed mean, normed mean (with same between-group mean),
+##   standard deviation, standard error of the mean, and confidence interval.
+## If there are within-subject variables, calculate adjusted values using method from Morey (2008).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   betweenvars: a vector containing names of columns that are between-subjects variables
+##   withinvars: a vector containing names of columns that are within-subjects variables
+##   idvar: the name of a column that identifies each subject (or matched subjects)
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySEwithin <- function(data=NULL, measurevar, betweenvars=NULL, withinvars=NULL,
+                            idvar=NULL, na.rm=FALSE, conf.interval=.95, .drop=TRUE) {
+  
+  # Ensure that the betweenvars and withinvars are factors
+  factorvars <- vapply(data[, c(betweenvars, withinvars), drop=FALSE],
+                       FUN=is.factor, FUN.VALUE=logical(1))
+  
+  if (!all(factorvars)) {
+    nonfactorvars <- names(factorvars)[!factorvars]
+    message("Automatically converting the following non-factors to factors: ",
+            paste(nonfactorvars, collapse = ", "))
+    data[nonfactorvars] <- lapply(data[nonfactorvars], factor)
+  }
+  
+  # Get the means from the un-normed data
+  datac <- summarySE(data, measurevar, groupvars=c(betweenvars, withinvars),
+                     na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+  
+  # Drop all the unused columns (these will be calculated with normed data)
+  datac$sd <- NULL
+  datac$se <- NULL
+  datac$ci <- NULL
+  
+  # Norm each subject's data
+  ndata <- normDataWithin(data, idvar, measurevar, betweenvars, na.rm, .drop=.drop)
+  
+  # This is the name of the new column
+  measurevar_n <- paste(measurevar, "_norm", sep="")
+  
+  # Collapse the normed data - now we can treat between and within vars the same
+  ndatac <- summarySE(ndata, measurevar_n, groupvars=c(betweenvars, withinvars),
+                      na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+  
+  # Apply correction from Morey (2008) to the standard error and confidence interval
+  #  Get the product of the number of conditions of within-S variables
+  nWithinGroups    <- prod(vapply(ndatac[,withinvars, drop=FALSE], FUN=nlevels,
+                                  FUN.VALUE=numeric(1)))
+  correctionFactor <- sqrt( nWithinGroups / (nWithinGroups-1) )
+  
+  # Apply the correction factor
+  ndatac$sd <- ndatac$sd * correctionFactor
+  ndatac$se <- ndatac$se * correctionFactor
+  ndatac$ci <- ndatac$ci * correctionFactor
+  
+  # Combine the un-normed means with the normed results
+  merge(datac, ndatac)
+}
+
+## Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   groupvars: a vector containing names of columns that contain grouping variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
 
 #We will perform a more detailed analysis to disentangle the contributions of 
 #within- and between-subject BMI variation. 
@@ -222,7 +391,7 @@ tspag + theme(axis.text=element_text(size=10),
 
 #mean BMI in subject
 mean.bmi.p.subj=tapply(X=fdata$BMI,
-                       INDEX=fdata$subj.ID, FUN=mean)
+                       INDEX=fdata$subj.ID, FUN=mean, na.rm=TRUE)
 fdata$mean.bmi.p.subj=
   mean.bmi.p.subj[as.numeric(fdata$subj.ID)]
 
@@ -235,9 +404,10 @@ fdata$within.bmi.p.subj=
 res=lmer(logmeanFD ~  mean.bmi.p.subj + within.bmi.p.subj + (1 |subj.ID),
          data=fdata, REML=F)
 summary(res)
+r.squaredGLMM(res)
 
 
-res=lmer(logmeanFD ~  mean.bmi.p.subj + within.bmi.p.subj + (1 |subj.ID),
+nres=lmer(logmeanFD ~  mean.bmi.p.subj + within.bmi.p.subj + (1 |subj.ID),
          data=fdata[fdata$condition=="IG",], REML=F)
 #diagnostics and convergence
 diagnostics.plot(res)
@@ -250,7 +420,7 @@ m.stab$summary
 
 #null model. significant effect of ind. variation in BMI
 null=lmer(logmeanFD ~  mean.bmi.p.subj + (1 |subj.ID),
-          data=fdata, REML=F)#the intercept is included by default. If you want to exclude it you would do R ~ 0 + ...
+          data=fdata, REML=T)#the intercept is included by default. If you want to exclude it you would do R ~ 0 + ...
 summary(null)
 as.data.frame(anova(res,null,test="Chisq"))
 

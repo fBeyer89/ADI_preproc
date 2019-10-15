@@ -1,6 +1,2 @@
-nipy1.4/crash*
-nipy1.4/structural/__init__.py
-nipy1.4/functional/denoising/__init__.py*
-nipy1.4/functional/denoising/nilearn_cache/
-test.conf
+./Project1_headmotion/analysis_for_bioarchix_version
 .Rhistory

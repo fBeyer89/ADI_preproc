@@ -369,7 +369,7 @@ summary {
 <h1>QA scripts for ADI study</h1>
 <div id="fs_qa" class="section level3">
 <h3>fs_qa</h3>
-<p>freesurfer qa was done according to Klapwijk et. al 2018 (see Klapwijk_QoalaT_fs_qa.pdf) briefly, all cross-sectional runs were inspected visually with <em>run_freesurfer_qa.sh</em> according to 4 criteria.</p>
+<p>freesurfer qa was done according to <a href="www.ncbi.nlm.nih.gov%2Fpubmed%2F30633965&amp;usg=AOvVaw3LFn7aLEFsuOjNZHdgnyQw">Klapwijk et. al 2018</a>. Also see Klapwijk_QoalaT_fs_qa.pdf in this folder. Briefly, all cross-sectional runs were inspected visually with <em>run_freesurfer_qa.sh</em> according to 4 criteria.</p>
 <ol style="list-style-type: decimal">
 <li>Is the reconstructed image affected by movement?</li>
 <li>Is (part of) the temporal pole missing in the reconstruction?</li>
@@ -383,23 +383,35 @@ summary {
 </div>
 <div id="rs_qa" class="section level3">
 <h3>rs_qa</h3>
-<p>resting state qa was done roughly according to the recommendations in <a href="https://www.nature.com/articles/s41596-018-0065-y?WT.feed_name=subjects_magnetic-resonance-imaging#Sec24" class="uri">https://www.nature.com/articles/s41596-018-0065-y?WT.feed_name=subjects_magnetic-resonance-imaging#Sec24</a></p>
+<p>resting state qa was done roughly according to the recommendations by Rastko Ciric in <a href="https://www.nature.com/articles/s41596-018-0065-y?WT.feed_name=subjects_magnetic-resonance-imaging#Sec24">Nature Protocols</a></p>
 <p><code>ADI_rs_qa.ods</code> is the file which contains QA information for the resting state. <code>all_ADI_for_rsqc.txt</code> is a text file with all participants included into the analysis before exclusion due to motion etc.</p>
 <div id="subject-level-qa" class="section level4">
 <h4>subject-level QA</h4>
 <ol style="list-style-type: decimal">
 <li>plotting</li>
 </ol>
-<p><code>run_rsqc.py</code> runs the subject-level qc visualization and extracts confounds. <code>utils.py</code> contains the necessary helper functions. It needs the same environment as the preprocessing but python version 3.0. First, denoising was inspected on a subject-level using individual plots of minimally preprocessed vs. denoised images. These are located in /data/pt_02161/preprocessed/resting/detailedQA/X/summary_fmriplot.png. On top, the % outliers (defined by default settings of <a href="https://afni.nimh.nih.gov/pub/dist/doc/program_help/3dToutcount.html" class="uri">https://afni.nimh.nih.gov/pub/dist/doc/program_help/3dToutcount.html</a>), framewise displacement in mm and DVARS in % signal change are shown. Below come the carpet plots of signal in voxels classified into compartments (from top to bottom: red: GM, green: WM, orange: CSF, blue: cerebellum) for minimally preprocessed, AROMA+CompCor and AROMA + CompCor + GSR denoised images.</p>
-<p>minimally preprocessed: after removal of first 4 volumes, motion correction (MCFlirt), coregistration to anatomical (BBREGISTER) unwarping with fieldmaps in FUGUE, all transforms applied in a single step (<em>/data/pt_02161/preprocessed/resting/transform_ts/X/rest2anat.nii.gz</em>)</p>
-<p>denoised: smoothing with 6mm FWHM, ICA AROMA to correct for motion artifacts, regression of 5 WM/CSF compcor components + high-pass filtering (<em>/data/pt_02161/preprocessed/resting/aroma/X/highpass_compcor/rest_denoised_highpassed.nii</em>) and optionally global signal (<em>/data/pt_02161/preprocessed/resting/aroma/X/highpass_compcor_gsr/rest_denoised_highpassed.nii</em>)</p>
-</div>
-<div id="group-level-qa" class="section level4">
-<h4>group-level QA</h4>
+<p><code>run_rsqc.py</code> runs the subject-level qc visualization and extracts confounds. <code>utils.py</code> contains the necessary helper functions. It needs the same environment as the preprocessing but python version 3.0. First, denoising was inspected on a subject-level using individual plots of minimally preprocessed vs. denoised images. These are located in /data/pt_02161/preprocessed/resting/detailedQA/X/summary_fmriplot.png. On top, the % outliers (defined by default settings of <a href="https://afni.nimh.nih.gov/pub/dist/doc/program_help/3dToutcount.html">afni</a>, framewise displacement in mm and DVARS in % signal change are shown. These values are also saved in <strong>/data/pt_02161/preprocessed/resting/detailedQA/metrics/X/confounds.csv</strong>. Only framewise displacement values are located in <strong>/data/pt_02161/preprocessed/resting/detailedQA/metrics/X/fd.txt</strong>. Below come the carpet plots of signal in voxels classified into compartments (from top to bottom: red: GM, green: WM, orange: CSF, blue: cerebellum) for minimally preprocessed, AROMA, AROMA+CompCor and AROMA + CompCor + GSR denoised images. Lines without signal change indicate that in these voxels (which were defined from the segmentation of the anatomical image) did not have meaningful signal in the functional (due to e.g. signal dropout or FOV limitations.) Compare to the final brainmask was created as the overlap of brain_mask.mgz from Freesurfer and BET-brain extracted mean of functional images (see <code>transform_timeseries.py</code>)</p>
+<ol style="list-style-type: decimal">
+<li>minimally preprocessed</li>
+</ol>
+<p>after removal of first 4 volumes, motion correction (MCFlirt), coregistration to anatomical (BBREGISTER) unwarping with fieldmaps in FUGUE, all transforms applied in a single step (<em>/data/pt_02161/preprocessed/resting/transform_ts/X/rest2anat.nii.gz</em>)</p>
+<ol start="2" style="list-style-type: decimal">
+<li>AROMA</li>
+</ol>
+<p>smoothing with 6mm FWHM, ICA AROMA to correct for motion artifacts. Use non-agressive denoising which does not remove shared variance between motion and non-motion components. (<em>/data/pt_02161/preprocessed/resting/aroma/X/denoised_func_data_nonaggr.nii.gz</em>)</p>
+<ol start="3" style="list-style-type: decimal">
+<li>denoised Compcor</li>
+</ol>
+<p>smoothing with 6mm FWHM, ICA AROMA to correct for motion artifacts, regression of 5 WM/CSF compcor components + high-pass filtering (<em>/data/pt_02161/preprocessed/resting/aroma/X/highpass_compcor/rest_denoised_highpassed.nii</em>)</p>
+<ol start="4" style="list-style-type: decimal">
+<li>denoised Compcor+ global signal</li>
+</ol>
+<p>(<em>/data/pt_02161/preprocessed/resting/aroma/X/highpass_compcor_gsr/rest_denoised_highpassed.nii</em>)</p>
+<p>The script also creates metrics (/data/pt_02161/preprocessed/resting/detailedQA/metrics/) #### group-level QA</p>
 <ol style="list-style-type: decimal">
 <li>calc_connectome</li>
 </ol>
-<p>Here, a connectome based on Power’s N=264 nodes with radius of 5 mm is calculated <code>calc_connectome.py</code>. It transforms the original, and denoised images into MNI space, extracts the timeseries from the ROIs and calculates the connectome. It then saves the connectome plot and the upper triangle of the correlation matrix (without the diagonale) for further analysis.</p>
+<p>Here, a connectome based on Power’s N=264 nodes with radius of 5 mm is calculated <code>calc_connectome.py</code>. It transforms the original, and denoised images into MNI space, extracts the timeseries from the ROIs and calculates the connectome. It then saves the connectome plot ( resting/detailedQA/Power264conn/X/connmatrix_0/1/2/3.png (min-preprocessed, aroma, aroma+cc, aroma+cc+gsr) and the upper triangle of the correlation matrix (resting/detailedQA/Power264conn/X/connvals.txt) for further analysis.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>QC-FC correlations</li>
 </ol>
