@@ -6,22 +6,22 @@ Based on the implementation of HCP pipelines for nipype (https://github.com/beOn
 `run_workflow_hcplike.py` runs the workflow defined in workflow.py. This incorporates different preprocessing blocks, which are specified in the subfolders `functional`,`structural` and `diffusion`, as well as in `interfaces.py` and `bids_conversion.py`.
 
 To run it:
-python run_workflow_hcplike.py --run -n 8 --config conf_for_ADI.conf 
+python run_workflow_hcplike.py --run -n 8 --config conf_for_ADI.conf
 
 conf_for_ADI.conf: configuration file where only ID of participant (subjects = ['ADIXXX_XX'] should be changed.
 
 Uses software packages:
-MRICRON AFNI --version '19.1.05' ANTSENV --version '2.3.1' FSL --version '6.0.1' FREESURFER --version '6.0.0p1' 
+MRICRON AFNI --version '19.1.05' ANTSENV --version '2.3.1' FSL --version '6.0.1' FREESURFER --version '6.0.0p1'
 
 Uses python 2.7.15 with packages: (conda environment can be built from agewell_env.2.yml)
 
 | package | version |
-| ------- | -------| 
+| ------- | -------|
 |bids-validator|1.2.3|
 |nibabel|2.2.0|
 |nipy|0.4.1|
-|nipype|1.2.0| 
-|nitime|0.7| 
+|nipype|1.2.0|
+|nitime|0.7|
 |pandas|0.23.4|
 |pydicom|1.2.2|
 |python|2.7.15|
@@ -36,7 +36,7 @@ Uses python 2.7.15 with packages: (conda environment can be built from agewell_e
 
 
 working directory is defined in "run_workflow_hcplike.py", ll.76: working_dir="/data/pt_02161/wd" (don't change, unless directory is full)
-The preprocessing is implemented similar to the HCP pipelines. 
+The preprocessing is implemented similar to the HCP pipelines.
 
 #### Preprocessing steps and outputs:
 
@@ -54,11 +54,11 @@ The preprocessing is implemented similar to the HCP pipelines.
   * /X/transform0GenericAffine.mat (affine matrix for this transform)
   * /X/T1_brain_mask.nii.gz (brainmask.mgz as nifti)
   * /X/T1.nii.gz (T1.mgz (before skullstrip) as nifti)
-  * /X/brain.nii.gz (brain.mgz as nifti, input of the transform) 
+  * /X/brain.nii.gz (brain.mgz as nifti, input of the transform)
 
 + Functional (rsfMRI) preprocessing: removal of first 4 volumes, motion correction (MCFlirt), coregistration to anatomical (BBREGISTER), unwarping with fieldmaps in FUGUE, all transforms applied in a single step. smoothing with 6mm FWHM, ICA AROMA to correct for motion artifacts, regression of 5 WM/CSF compcor components and additionally global signal.
 
-**Discussion**: 
+**Discussion**:
 
 Standard in fMRIprep is to use "non-aggressive" denoising (Pruim, 2015, in the Discussion). There is ongoing discussion on whether to extract nuisance parameters (WM, CSF and global signal) before or after ICA-AROMA is applied. Here (https://github.com/poldracklab/fmriprep/issues/817) it was concluded that "non-aggressive case: Based on the notebook, my current opinion is that one should be able to the use other confounds (such as global signal) without modification even if they were derived from the non-denoised data." Yet, here (https://neurostars.org/t/ica-aroma-agg-vs-non-agg/3708/8) it was mentioned that "Intuitively, we might expect that – in order to prevent reintroduction of such structured noise – we would want to re-extract the mean CSF, WM, and global time series after performing the nonaggressive denoising, since they will already be orthogonal to any sources of variance removed during the nonaggressive denoising step." They also show a simulation where a slight benefit for extracting nuisance before AROMA is shown (https://github.com/poldracklab/fmriprep-notebooks/blob/9933a628dfb759dc73e61701c144d67898b92de0/05%20-%20Discussion%20AROMA%20confounds%20-%20issue-817%20%5BJ.%20Kent%5D.ipynb).
 Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from the denoised AROMA data.
@@ -102,8 +102,8 @@ Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from
     * metrics/X/confounds.csv: outlier and DVARS values & metrics/X/fd.txt: framewise displacement values
     * fftplot/X/freqplot.png: fourier transform of the framewise displacement (to identify breathing artifact)
     * /X/summary_fmriplot.png: summary_fmriplot.png shows outliers (from AFNI3DOutliercount), FD and DVARS trace over all volumes. Below carpet plot of red: GM, green: WM, orange: CSF and blue: cerebellum voxels for the minimally preprocessed data.
-    
-      
+
+
 + Diffusion MRI preprocessing: artefacts correction including denoising (MRTrix: dwidenoise) ; distortion correction based on fieldmaps, used together with motion correction and outliner replacement (FSL: eddy); tensor model fitting (FSL: dtifit) > /data/pt_02161/Data/preprocessed/diffusion
 
     * /X/gre_field_mapping_2.3iso_s12_ph_fslprepared.nii.gz (fieldmap for unwarping DWI)
@@ -112,17 +112,17 @@ Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from
     * /X/DTI_9b0_23iso_86ms_TR7500_s13_merged_denoised.nii.gz (denoised DWI)
 
     * dti
-       * /X/fa2anat.mat (bbregister FA to anat reg matrix)
-       * /X/fa2anat.dat (bbregister FA to anat reg matrix)
-       * /X/fa2anat_bbreg.nii.gz (bbregister FA to anat reg result)
-       * /X/dtifit__V3.nii.gz
-       * /X/dtifit__MD.nii.gz (MD map in individual's anatomical space)
-       * /X/dtifit__L3.nii.gz
-       * /X/dtifit__L2.nii.gz
-       * /X/dtifit__L1.nii.gz
-       * /X/dtifit__V2.nii.gz
-       * /X/dtifit__V1.nii.gz  
-       * /X/dtifit__FA.nii.gz  (FA map in individual's anatomical space)
+       * `/X/fa2anat.mat (bbregister FA to anat reg matrix)`
+       * `/X/fa2anat.dat (bbregister FA to anat reg matrix)`
+       * `/X/fa2anat_bbreg.nii.gz (bbregister FA to anat reg result)`
+       * `/X/dtifit__V3.nii.gz`
+       * `/X/dtifit__MD.nii.gz (MD map in individual's anatomical space)`
+       * `/X/dtifit__L3.nii.gz`
+       * `/X/dtifit__L2.nii.gz`
+       * `/X/dtifit__L1.nii.gz`
+       * `/X/dtifit__V2.nii.gz`
+       * `/X/dtifit__V1.nii.gz`  
+       * `/X/dtifit__FA.nii.gz`  (FA map in individual's anatomical space)
     * eddy
        * /X/eddy_corrected.eddy_residuals.nii.gz (eddy residuals)
        * /X/eddy_corrected.eddy_cnr_maps.nii.gz (CNR maps from eddy)
@@ -138,20 +138,20 @@ Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from
 #### Preprocessing history
 
 1. Some preprocessing errors were discovered for some subjects and adaptations had to be made.
-  
+
   Solved "special" cases
-  
+
   - ADI049_bl:  different acquisitions names, therefore `interfaces_ADI049` which has a modified NiiWrangler-interface needs to be included into the `workflow.py`/`workflow_long.py` instead of `interfaces.py` for this subject.
-  - ADI041_bl and ADI088_fu2: both subjects have two rs-acquisitions. Therefore scripts were modified to merge the acquisitions. 
-  
+  - ADI041_bl and ADI088_fu2: both subjects have two rs-acquisitions. Therefore scripts were modified to merge the acquisitions.
+
   Nonsolvable/Problem cases
-  
+
   - ADI014_bl > no T1 image
   - ADI002_fu2 > non isotropic T1
-  - ADI091_fu2 > no usable sequences 
-  
+  - ADI091_fu2 > no usable sequences
+
   Excluded due to excessive head motion in anatomical/functional
-  
+
   - ADI116_bl, ADI116_fu, ADI116_fu2
   - ADI009_fu2
   - ADI063_bl, ADI063_fu
@@ -160,7 +160,7 @@ Here, I implemented non-aggressive denoising + WM/CSF/GSR signals extracted from
 
 - manual correction of freesurfer outputs (according to Klapwijk: Quola-T-protocol)
 - need accurate pial editing because skullstripped brain is used for registration in hypothalamus pipeline.
-- corrected fs and rerun for certain subjects 
+- corrected fs and rerun for certain subjects
 - see /data/pt_02161/Analysis/Preprocessing/qa/README.md for details
 - then freesurfer longitudinal pipeline was run and also visually checked. fs longitudinal could not be run with nipype pipeline, therefore it was started with bash-scripts in /data/pt_02161/Analysis/Preprocessing/nipy1.4/structural/longitudinal_stream/.
 

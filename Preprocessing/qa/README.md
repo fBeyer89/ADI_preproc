@@ -26,13 +26,13 @@ After template creation, and longitudinal timepoints analysis, pial and white ma
 
 resting state qa was done roughly according to the recommendations by Rastko Ciric in [Nature Protocols](https://www.nature.com/articles/s41596-018-0065-y?WT.feed_name=subjects_magnetic-resonance-imaging#Sec24)
 
-`ADI_rs_qa.csv` is the file which contains QA information for the resting state. `all_ADI_for_rsqc.txt` is a text file with all participants included into the analysis before exclusion due to motion etc. 
+`ADI_rs_qa.csv` is the file which contains QA information for the resting state. `all_ADI_for_rsqc.txt` is a text file with all participants included into the analysis before exclusion due to motion etc.
 
 #### subject-level QA
 
 1. plotting
 
-`run_rsqc.py` runs the subject-level qc visualization and extracts confounds. `utils.py` contains the necessary helper functions. It needs the same environment as the preprocessing but python version 3.0.
+`run_rsqc.py` runs the subject-level qc visualization and extracts confounds. `utils.py` contains the necessary helper functions. It needs the same environment as the preprocessing but python version 3.0. 
 First, denoising was inspected on a subject-level using individual plots of minimally preprocessed vs. denoised images. These are located in /data/pt_02161/preprocessed/resting/detailedQA/X/summary_fmriplot.png. On top, the % outliers (defined by default settings of [afni](https://afni.nimh.nih.gov/pub/dist/doc/program_help/3dToutcount.html), framewise displacement in mm and DVARS in % signal change are shown. These values are also saved in */data/pt_02161/preprocessed/resting/detailedQA/metrics/X/confounds.csv*. Only framewise displacement values are located in */data/pt_02161/preprocessed/resting/detailedQA/metrics/X/fd.txt*. Below come the carpet plots of signal in voxels classified into compartments (from top to bottom: red: GM, green: WM, orange: CSF, blue: cerebellum) for minimally preprocessed, AROMA, AROMA+CompCor and AROMA + CompCor + GSR denoised images. Lines without signal change indicate that in these voxels (which were defined from the segmentation of the anatomical image) did not have meaningful signal in the functional (due to e.g. signal dropout or FOV limitations.) Compare to the final brainmask was created as the overlap of brain_mask.mgz from Freesurfer and BET-brain extracted mean of functional images (see `transform_timeseries.py`)
 
 1. minimally preprocessed
