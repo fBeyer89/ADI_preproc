@@ -26,7 +26,7 @@
 .markdown-preview:not([data-use-github-style]) code { color: rgb(255, 255, 255); background-color: rgb(58, 63, 75); }
 .markdown-preview:not([data-use-github-style]) pre.editor-colors { margin: 1.5em 0px; padding: 1em; font-size: 0.92em; border-radius: 3px; background-color: rgb(49, 54, 63); }
 .markdown-preview:not([data-use-github-style]) kbd { color: rgb(255, 255, 255); border-width: 1px 1px 2px; border-style: solid; border-color: rgb(75, 83, 98) rgb(75, 83, 98) rgb(62, 68, 81); border-image: initial; background-color: rgb(58, 63, 75); }
-.markdown-preview[data-use-github-style] { font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; line-height: 1.6; word-wrap: break-word; padding: 30px; font-size: 16px; color: rgb(51, 51, 51); background-color: rgb(255, 255, 255); overflow: scroll; }
+.markdown-preview[data-use-github-style] { font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; line-height: 1.6; overflow-wrap: break-word; padding: 30px; font-size: 16px; color: rgb(51, 51, 51); background-color: rgb(255, 255, 255); overflow: scroll; }
 .markdown-preview[data-use-github-style] > :first-child { margin-top: 0px !important; }
 .markdown-preview[data-use-github-style] > :last-child { margin-bottom: 0px !important; }
 .markdown-preview[data-use-github-style] a:not([href]) { color: inherit; text-decoration: none; }
@@ -91,8 +91,8 @@
 .markdown-preview[data-use-github-style] .highlight { margin-bottom: 16px; }
 .markdown-preview[data-use-github-style] .highlight pre, .markdown-preview[data-use-github-style] pre { padding: 16px; overflow: auto; font-size: 85%; line-height: 1.45; background-color: rgb(247, 247, 247); border-radius: 3px; }
 .markdown-preview[data-use-github-style] .highlight pre { margin-bottom: 0px; word-break: normal; }
-.markdown-preview[data-use-github-style] pre { word-wrap: normal; }
-.markdown-preview[data-use-github-style] pre code, .markdown-preview[data-use-github-style] pre tt { display: inline; max-width: initial; padding: 0px; margin: 0px; overflow: initial; line-height: inherit; word-wrap: normal; background-color: transparent; border: 0px; }
+.markdown-preview[data-use-github-style] pre { overflow-wrap: normal; }
+.markdown-preview[data-use-github-style] pre code, .markdown-preview[data-use-github-style] pre tt { display: inline; max-width: initial; padding: 0px; margin: 0px; overflow: initial; line-height: inherit; overflow-wrap: normal; background-color: transparent; border: 0px; }
 .markdown-preview[data-use-github-style] pre code::before, .markdown-preview[data-use-github-style] pre tt::before, .markdown-preview[data-use-github-style] pre code::after, .markdown-preview[data-use-github-style] pre tt::after { content: normal; }
 .markdown-preview[data-use-github-style] kbd { display: inline-block; padding: 3px 5px; font-size: 11px; line-height: 10px; color: rgb(85, 85, 85); vertical-align: middle; background-color: rgb(252, 252, 252); border-width: 1px; border-style: solid; border-color: rgb(204, 204, 204) rgb(204, 204, 204) rgb(187, 187, 187); border-image: initial; border-radius: 3px; box-shadow: rgb(187, 187, 187) 0px -1px 0px inset; }
 .markdown-preview[data-use-github-style] a { color: rgb(51, 122, 183); }
@@ -203,7 +203,7 @@ pre.editor-colors .fold-marker:after {
   color: #e5c07b;
 }
 .syntax--entity.syntax--other.syntax--inherited-class {
-  color: #98c379;
+  color: #e5c07b;
 }
 .syntax--keyword {
   color: #c678dd;
@@ -602,5 +602,26 @@ The working directory of this analysis is <code style="font-family: Menlo, Conso
 <p>Use a g6 compute server <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">getserver -sL -g6</code>. Run <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">./environment.sh</code> and load conda environment py3 or agewell_nip1.2.</p>
 <h5 id="analysis-2">Analysis</h5>
 <p>Use <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">python calc_DMN_rew_seed.py</code> to calculate the connectivity between a precuneus-ROI (for DMN) and a Nucleus accumbens ROI (for reward network). These ROIs are defined based on the longitudinal stream of FS (saved in <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/p_02161/ADI_Studie/BIDS/derivatives/freesurfer</code>). The connectivity is calculated for minimally preprocessed, AROMA-non-aggr, AROMA+CC and AROMA+CC+GSR-preprocessed data. You have to specify the subjectlist and input files in the script.
-The working directory of this analysis is <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/wd/calc_Rew_DMN_seed</code> and results are saved in <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/Results/Project2_resting_state/connectivity/calc_DMN_reward_seed_connectivity/</code>.</p></body>
+The working directory of this analysis is <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/wd/calc_Rew_DMN_seed</code> and results are saved in <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/Results/Project2_resting_state/connectivity/calc_DMN_reward_seed_connectivity/</code>.</p>
+<h3 id="second-level">Second-level</h3>
+<p>This folder contains files and scripts for the second-level analysis of the connectivity data using the Sandwich-estimator toolbox (SwE) in SPM.</p>
+<h5 id="prerequisites-3">Prerequisites:</h5>
+<p>Use a g6 compute server <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">getserver -sL -g6</code>. Start current MATLAB version, then add private SPM "addpath(genpath('/data/pt_life/data_fbeyer/spm-fbeyer'))".</p>
+<h5 id="analysis-3">Analysis</h5>
+<p>Batch scripts to run the second-level analyses are located in the results folders <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/Results/Project2_resting_state/connectivity/Analysis/</code>.   </p>
+<p>Different modeling approaches can be taken:</p>
+<ul>
+<li>model time as continuous for both groups (<code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/Results/Project2_resting_state/connectivity/Analysis/PCC_cc_z/tp_linear/Model1_group_tp_codedlinearly_job.m</code>) -&gt; is appropriate for smaller samples and when change can be reasonably approximated as linear</li>
+<li>model time_group combination as factor (<code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">/data/pt_02161/Results/Project2_resting_state/connectivity/Analysis/PCC_cc_z/tp_factor/Model2_group_tp_as_factor_job.m</code>)-&gt; may be more powerful when higher number of N in the sample, and changes may be non tp_linear</li>
+</ul>
+<p><a href="https://groups.google.com/g/swe-toolbox/c/dn8zv-kO4RM">In this post</a>,  the difference between the two modeling approaches is explained.
+<a href="https://groups.google.com/g/swe-toolbox/c/RClq26Pg5uA">Here</a> are more arguments and explanations for modeling each group_tp factor separately. Good example for understanding <a href="https://groups.google.com/g/swe-toolbox/c/ItAUwzt4pVw">contrasts</a> for 2x2x2 designs.
+Another walkthrough for a <a href="https://groups.google.com/g/swe-toolbox/c/tZL91Ma6MTg">4x2</a> longitudinal design.
+When examing the between- and within-subjects variation, one should split the effects (in this study, e.g. for BMI change)) with</p>
+<p>All subject/group covariates for the <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">_job.m</code> files were created with the script <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">get_subject_ID_group_tp_forSwE.R</code> and are locateed in <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">SwE_files</code> which contain necessary g</p>
+<p><strong>To do</strong></p>
+<ul>
+<li>run group-by-time interaction for all 4 preprocessing + with correction for age, sex, meanFD (as F-test, and individual group contrasts)</li>
+<li>calculate correlation of BMI change and FC change, correcting for mean FD, age, sex according to <a href="http://doi.org/10.1016/j.neuroimage.2014.03.029">this paper</a>, specified in <a href="https://groups.google.com/g/swe-toolbox/c/kTqU-l514B0">this post</a> &amp; <a href="https://groups.google.com/g/swe-toolbox/c/tZL91Ma6MTg">this post</a>.</li>
+</ul></body>
       </html>
