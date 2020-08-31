@@ -1,0 +1,10 @@
+/ContrastName1	diff time by group (fu-bl) 
+/ContrastName2	diff time by group (bl-fu) 
+/NumWaves	2
+/NumContrasts	2
+/PPheights		1.625280e+00	1.625280e+00
+/RequiredEffect		2.757	2.757
+
+/Matrix
+1.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 

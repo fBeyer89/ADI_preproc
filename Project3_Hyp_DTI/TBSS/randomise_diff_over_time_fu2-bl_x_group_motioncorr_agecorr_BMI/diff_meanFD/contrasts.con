@@ -1,0 +1,18 @@
+/ContrastName1	diff over time x group (fu2-bl)  
+/ContrastName2	diff over time x group (bl-fu2)  
+/ContrastName3	diff_meanFD mean 
+/ContrastName4	Age_z mean 
+/ContrastName5	BMI_bl mean 
+/ContrastName6	BMI_change mean 
+/NumWaves	5
+/NumContrasts	6
+/PPheights		9.874044e-01	9.874044e-01	5.399825e-01	3.110083e+00	6.577689e+01	1.331265e+01
+/RequiredEffect		5.405	5.405	6.560	5.407	3.178	5.151
+
+/Matrix
+1.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+0.000000e+00 1.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 

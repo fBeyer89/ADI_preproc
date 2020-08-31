@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_FMM.a  CMakeFiles/_seg_FMM.dir/_seg_FMM.cpp.o
+/usr/bin/ranlib lib_seg_FMM.a

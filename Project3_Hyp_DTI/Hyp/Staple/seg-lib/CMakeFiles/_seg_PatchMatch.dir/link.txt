@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_PatchMatch.a  CMakeFiles/_seg_PatchMatch.dir/_seg_PatchMatch.cpp.o CMakeFiles/_seg_PatchMatch.dir/_seg_PatchMatchResult.cpp.o
+/usr/bin/ranlib lib_seg_PatchMatch.a

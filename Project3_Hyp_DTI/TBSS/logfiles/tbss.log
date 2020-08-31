@@ -1,0 +1,690 @@
+############################
+########## Wed Dec  4 16:10:30 CET 2019 ###########
+############################
+##### run regular tbss routine #####
+processing ADI006_FA_base
+processing ADI009_FA_base
+processing ADI013_FA_base
+processing ADI016_FA_base
+processing ADI025_FA_base
+processing ADI036_FA_base
+processing ADI041_FA_base
+processing ADI045_FA_base
+processing ADI046_FA_base
+processing ADI048_FA_base
+processing ADI049_FA_base
+processing ADI061_FA_base
+processing ADI062_FA_base
+processing ADI063_FA_base
+processing ADI064_FA_base
+processing ADI068_FA_base
+processing ADI069_FA_base
+processing ADI072_FA_base
+processing ADI087_FA_base
+processing ADI097_FA_base
+processing ADI102_FA_base
+processing ADI107_FA_base
+processing ADI111_FA_base
+processing ADI116_FA_base
+processing ADI124_FA_base
+processing ADI139_FA_base
+processing ADI140_FA_base
+Now running "slicesdir" to generate report of all input images
+Finished. To view, point your web browser at
+file:/data/pt_02161/wd/tbss/base/FA/slicesdir/index.html
+ADI006_FA_base_FA_to_target
+ADI009_FA_base_FA_to_target
+ADI013_FA_base_FA_to_target
+ADI016_FA_base_FA_to_target
+ADI025_FA_base_FA_to_target
+ADI036_FA_base_FA_to_target
+ADI041_FA_base_FA_to_target
+ADI045_FA_base_FA_to_target
+ADI046_FA_base_FA_to_target
+ADI048_FA_base_FA_to_target
+ADI049_FA_base_FA_to_target
+ADI061_FA_base_FA_to_target
+ADI062_FA_base_FA_to_target
+ADI063_FA_base_FA_to_target
+ADI064_FA_base_FA_to_target
+ADI068_FA_base_FA_to_target
+ADI069_FA_base_FA_to_target
+ADI072_FA_base_FA_to_target
+ADI087_FA_base_FA_to_target
+ADI097_FA_base_FA_to_target
+ADI102_FA_base_FA_to_target
+ADI107_FA_base_FA_to_target
+ADI111_FA_base_FA_to_target
+ADI116_FA_base_FA_to_target
+ADI124_FA_base_FA_to_target
+ADI139_FA_base_FA_to_target
+ADI140_FA_base_FA_to_target
+65936
+using pre-chosen target for registration
+transforming all FA images into MNI152 space
+ADI006_FA_base_FA
+ADI009_FA_base_FA
+ADI013_FA_base_FA
+ADI016_FA_base_FA
+ADI025_FA_base_FA
+ADI036_FA_base_FA
+ADI041_FA_base_FA
+ADI045_FA_base_FA
+ADI046_FA_base_FA
+ADI048_FA_base_FA
+ADI049_FA_base_FA
+ADI061_FA_base_FA
+ADI062_FA_base_FA
+ADI063_FA_base_FA
+ADI064_FA_base_FA
+ADI068_FA_base_FA
+ADI069_FA_base_FA
+ADI072_FA_base_FA
+ADI087_FA_base_FA
+ADI097_FA_base_FA
+ADI102_FA_base_FA
+ADI107_FA_base_FA
+ADI111_FA_base_FA
+ADI116_FA_base_FA
+ADI124_FA_base_FA
+ADI139_FA_base_FA
+ADI140_FA_base_FA
+merging all upsampled FA images into single 4D image
+creating valid mask and mean FA
+skeletonising mean FA
+now view mean_FA_skeleton to check whether the default threshold of 0.2 needs changing, when running:
+tbss_4_prestats <threshold>
+creating skeleton mask using threshold 0.2
+creating skeleton distancemap (for use in projection search)
+projecting all FA data onto skeleton
+
+now run stats - for example:
+randomise -i all_FA_skeletonised -o tbss -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+##### run tbss with halfway warping #####
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI013_FA_base
+ADI016_FA_base
+ADI025_FA_base
+ADI036_FA_base
+ADI041_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI063_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI069_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI102_FA_base
+ADI107_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI139_FA_base
+ADI140_FA_base
+merging all upsampled bl images into single 4D image
+projecting all_bl onto mean FA skeleton
+now run stats - for example:
+randomise -i all_bl_skeletonised -o tbss_bl -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI013_FA_base
+ADI016_FA_base
+ADI025_FA_base
+ADI036_FA_base
+ADI041_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI063_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI069_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI102_FA_base
+ADI107_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI139_FA_base
+ADI140_FA_base
+merging all upsampled fu images into single 4D image
+projecting all_fu onto mean FA skeleton
+now run stats - for example:
+randomise -i all_fu_skeletonised -o tbss_fu -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+############################
+########## Fri Dec  6 12:10:54 CET 2019 ###########
+############################
+##### run regular tbss routine #####
+processing ADI006_FA_base
+processing ADI009_FA_base
+processing ADI013_FA_base
+processing ADI016_FA_base
+processing ADI020_FA_base
+processing ADI025_FA_base
+processing ADI036_FA_base
+processing ADI041_FA_base
+processing ADI045_FA_base
+processing ADI046_FA_base
+processing ADI048_FA_base
+processing ADI049_FA_base
+processing ADI061_FA_base
+processing ADI062_FA_base
+processing ADI063_FA_base
+processing ADI064_FA_base
+processing ADI068_FA_base
+processing ADI069_FA_base
+processing ADI072_FA_base
+processing ADI087_FA_base
+processing ADI097_FA_base
+processing ADI102_FA_base
+processing ADI107_FA_base
+processing ADI111_FA_base
+processing ADI116_FA_base
+processing ADI124_FA_base
+processing ADI139_FA_base
+processing ADI140_FA_base
+Now running "slicesdir" to generate report of all input images
+Finished. To view, point your web browser at
+file:/data/pt_02161/wd/tbss/base/FA/slicesdir/index.html
+ADI006_FA_base_FA_to_target
+ADI009_FA_base_FA_to_target
+ADI013_FA_base_FA_to_target
+ADI016_FA_base_FA_to_target
+ADI020_FA_base_FA_to_target
+ADI025_FA_base_FA_to_target
+ADI036_FA_base_FA_to_target
+ADI041_FA_base_FA_to_target
+ADI045_FA_base_FA_to_target
+ADI046_FA_base_FA_to_target
+ADI048_FA_base_FA_to_target
+ADI049_FA_base_FA_to_target
+ADI061_FA_base_FA_to_target
+ADI062_FA_base_FA_to_target
+ADI063_FA_base_FA_to_target
+ADI064_FA_base_FA_to_target
+ADI068_FA_base_FA_to_target
+ADI069_FA_base_FA_to_target
+ADI072_FA_base_FA_to_target
+ADI087_FA_base_FA_to_target
+ADI097_FA_base_FA_to_target
+ADI102_FA_base_FA_to_target
+ADI107_FA_base_FA_to_target
+ADI111_FA_base_FA_to_target
+ADI116_FA_base_FA_to_target
+ADI124_FA_base_FA_to_target
+ADI139_FA_base_FA_to_target
+ADI140_FA_base_FA_to_target
+############################
+########## Fri Dec  6 12:21:28 CET 2019 ###########
+############################
+##### run regular tbss routine #####
+processing ADI006_FA_base
+processing ADI009_FA_base
+processing ADI013_FA_base
+processing ADI016_FA_base
+processing ADI020_FA_base
+processing ADI025_FA_base
+processing ADI036_FA_base
+processing ADI041_FA_base
+processing ADI045_FA_base
+processing ADI046_FA_base
+processing ADI048_FA_base
+processing ADI049_FA_base
+processing ADI061_FA_base
+processing ADI062_FA_base
+processing ADI063_FA_base
+processing ADI064_FA_base
+processing ADI068_FA_base
+processing ADI069_FA_base
+processing ADI072_FA_base
+processing ADI087_FA_base
+processing ADI097_FA_base
+processing ADI102_FA_base
+processing ADI107_FA_base
+processing ADI111_FA_base
+processing ADI116_FA_base
+processing ADI124_FA_base
+processing ADI139_FA_base
+processing ADI140_FA_base
+Now running "slicesdir" to generate report of all input images
+Finished. To view, point your web browser at
+file:/data/pt_02161/wd/tbss/base/FA/slicesdir/index.html
+ADI006_FA_base_FA_to_target
+ADI009_FA_base_FA_to_target
+ADI013_FA_base_FA_to_target
+ADI016_FA_base_FA_to_target
+ADI020_FA_base_FA_to_target
+ADI025_FA_base_FA_to_target
+ADI036_FA_base_FA_to_target
+ADI041_FA_base_FA_to_target
+ADI045_FA_base_FA_to_target
+ADI046_FA_base_FA_to_target
+ADI048_FA_base_FA_to_target
+ADI049_FA_base_FA_to_target
+ADI061_FA_base_FA_to_target
+ADI062_FA_base_FA_to_target
+ADI063_FA_base_FA_to_target
+ADI064_FA_base_FA_to_target
+ADI068_FA_base_FA_to_target
+ADI069_FA_base_FA_to_target
+ADI072_FA_base_FA_to_target
+ADI087_FA_base_FA_to_target
+ADI097_FA_base_FA_to_target
+ADI102_FA_base_FA_to_target
+ADI107_FA_base_FA_to_target
+ADI111_FA_base_FA_to_target
+ADI116_FA_base_FA_to_target
+ADI124_FA_base_FA_to_target
+ADI139_FA_base_FA_to_target
+ADI140_FA_base_FA_to_target
+23092
+using pre-chosen target for registration
+transforming all FA images into MNI152 space
+ADI006_FA_base_FA
+ADI009_FA_base_FA
+ADI013_FA_base_FA
+ADI016_FA_base_FA
+ADI020_FA_base_FA
+ADI025_FA_base_FA
+ADI036_FA_base_FA
+ADI041_FA_base_FA
+ADI045_FA_base_FA
+ADI046_FA_base_FA
+ADI048_FA_base_FA
+ADI049_FA_base_FA
+ADI061_FA_base_FA
+ADI062_FA_base_FA
+ADI063_FA_base_FA
+ADI064_FA_base_FA
+ADI068_FA_base_FA
+ADI069_FA_base_FA
+ADI072_FA_base_FA
+ADI087_FA_base_FA
+ADI097_FA_base_FA
+ADI102_FA_base_FA
+ADI107_FA_base_FA
+ADI111_FA_base_FA
+ADI116_FA_base_FA
+ADI124_FA_base_FA
+ADI139_FA_base_FA
+ADI140_FA_base_FA
+merging all upsampled FA images into single 4D image
+creating valid mask and mean FA
+skeletonising mean FA
+now view mean_FA_skeleton to check whether the default threshold of 0.2 needs changing, when running:
+tbss_4_prestats <threshold>
+creating skeleton mask using threshold 0.2
+creating skeleton distancemap (for use in projection search)
+projecting all FA data onto skeleton
+
+now run stats - for example:
+randomise -i all_FA_skeletonised -o tbss -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+##### run tbss with halfway warping #####
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI013_FA_base
+ADI016_FA_base
+ADI020_FA_base
+ADI025_FA_base
+ADI036_FA_base
+ADI041_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI063_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI069_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI102_FA_base
+ADI107_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI139_FA_base
+ADI140_FA_base
+merging all upsampled bl images into single 4D image
+projecting all_bl onto mean FA skeleton
+now run stats - for example:
+randomise -i all_bl_skeletonised -o tbss_bl -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI013_FA_base
+ADI016_FA_base
+ADI020_FA_base
+ADI025_FA_base
+ADI036_FA_base
+ADI041_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI063_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI069_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI102_FA_base
+ADI107_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI139_FA_base
+ADI140_FA_base
+merging all upsampled fu images into single 4D image
+projecting all_fu onto mean FA skeleton
+now run stats - for example:
+randomise -i all_fu_skeletonised -o tbss_fu -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+############################
+########## Mon Dec  9 10:50:13 CET 2019 ###########
+############################
+#### erode mean fa mask to remove skull leftovers #####
+#### apply mean_FA_mask_eroded on mean_FA_skeleton_mask #####
+############################
+########## Mon Dec  9 11:00:11 CET 2019 ###########
+############################
+#### erode mean fa mask to remove skull leftovers #####
+#### erode mean fa mask to remove skull leftovers ! a second time !#####
+#### apply mean_FA_mask_eroded_twice on mean_FA_skeleton_mask #####
+############################
+########## Thu Dec 19 12:02:23 CET 2019 ###########
+############################
+#### erode mean fa remove skull leftovers twice #####
+
+############################
+########## Tue Jan  7 16:56:52 CET 2020 ###########
+############################
+##### run regular tbss routine with FU2 #####
+processing ADI045_FA_base
+processing ADI046_FA_base
+processing ADI048_FA_base
+processing ADI049_FA_base
+processing ADI061_FA_base
+processing ADI062_FA_base
+processing ADI064_FA_base
+processing ADI068_FA_base
+processing ADI072_FA_base
+processing ADI087_FA_base
+processing ADI097_FA_base
+processing ADI111_FA_base
+processing ADI116_FA_base
+processing ADI124_FA_base
+processing ADI140_FA_base
+Now running "slicesdir" to generate report of all input images
+Finished. To view, point your web browser at
+file:/data/pt_02161/wd/tbss/base_bl_fu2/FA/slicesdir/index.html
+ADI006_FA_base_FA_to_target
+ADI009_FA_base_FA_to_target
+ADI016_FA_base_FA_to_target
+ADI036_FA_base_FA_to_target
+ADI045_FA_base_FA_to_target
+ADI046_FA_base_FA_to_target
+ADI048_FA_base_FA_to_target
+ADI049_FA_base_FA_to_target
+ADI061_FA_base_FA_to_target
+ADI062_FA_base_FA_to_target
+ADI064_FA_base_FA_to_target
+ADI068_FA_base_FA_to_target
+ADI072_FA_base_FA_to_target
+ADI087_FA_base_FA_to_target
+ADI097_FA_base_FA_to_target
+ADI111_FA_base_FA_to_target
+ADI116_FA_base_FA_to_target
+ADI124_FA_base_FA_to_target
+ADI140_FA_base_FA_to_target
+############################
+########## Tue Jan  7 17:24:48 CET 2020 ###########
+############################
+##### run regular tbss routine with FU2 #####
+Now running "slicesdir" to generate report of all input images
+-e <thr>   :  use the specified threshold for edges (if >0 use this proportion of max-min, if <0, use the absolute value)
+-S         : output every second axial slice rather than just 9 ortho slices
+Task file (.commands) does not exist
+using pre-chosen target for registration
+transforming all FA images into MNI152 space
+merging all upsampled FA images into single 4D image
+
+Usage: fslmerge <-x/y/z/t/a/tr> <output> <file1 file2 .......> [tr value in seconds]
+     -t : concatenate images in time
+     -x : concatenate images in the x direction
+     -y : concatenate images in the y direction
+     -z : concatenate images in the z direction
+     -a : auto-choose: single slices -> volume, volumes -> 4D (time series)
+     -tr : concatenate images in time and set the output image tr to the final option value
+creating valid mask and mean FA
+skeletonising mean FA
+now view mean_FA_skeleton to check whether the default threshold of 0.2 needs changing, when running:
+tbss_4_prestats <threshold>
+############################
+########## Tue Jan  7 17:25:56 CET 2020 ###########
+############################
+##### run regular tbss routine with FU2 #####
+processing ADI006_FA_base
+processing ADI009_FA_base
+processing ADI016_FA_base
+processing ADI020_FA_base
+processing ADI036_FA_base
+processing ADI045_FA_base
+processing ADI046_FA_base
+processing ADI048_FA_base
+processing ADI049_FA_base
+processing ADI061_FA_base
+processing ADI062_FA_base
+processing ADI064_FA_base
+processing ADI068_FA_base
+processing ADI072_FA_base
+processing ADI087_FA_base
+processing ADI097_FA_base
+processing ADI111_FA_base
+processing ADI116_FA_base
+processing ADI124_FA_base
+processing ADI140_FA_base
+Now running "slicesdir" to generate report of all input images
+Finished. To view, point your web browser at
+file:/data/pt_02161/wd/tbss/base_bl_fu2/FA/slicesdir/index.html
+ADI006_FA_base_FA_to_target
+ADI009_FA_base_FA_to_target
+ADI016_FA_base_FA_to_target
+ADI020_FA_base_FA_to_target
+ADI036_FA_base_FA_to_target
+ADI045_FA_base_FA_to_target
+ADI046_FA_base_FA_to_target
+ADI048_FA_base_FA_to_target
+ADI049_FA_base_FA_to_target
+ADI061_FA_base_FA_to_target
+ADI062_FA_base_FA_to_target
+ADI064_FA_base_FA_to_target
+ADI068_FA_base_FA_to_target
+ADI072_FA_base_FA_to_target
+ADI087_FA_base_FA_to_target
+ADI097_FA_base_FA_to_target
+ADI111_FA_base_FA_to_target
+ADI116_FA_base_FA_to_target
+ADI124_FA_base_FA_to_target
+ADI140_FA_base_FA_to_target
+20727
+using pre-chosen target for registration
+transforming all FA images into MNI152 space
+ADI006_FA_base_FA
+ADI009_FA_base_FA
+ADI016_FA_base_FA
+ADI020_FA_base_FA
+ADI036_FA_base_FA
+ADI045_FA_base_FA
+ADI046_FA_base_FA
+ADI048_FA_base_FA
+ADI049_FA_base_FA
+ADI061_FA_base_FA
+ADI062_FA_base_FA
+ADI064_FA_base_FA
+ADI068_FA_base_FA
+ADI072_FA_base_FA
+ADI087_FA_base_FA
+ADI097_FA_base_FA
+ADI111_FA_base_FA
+ADI116_FA_base_FA
+ADI124_FA_base_FA
+ADI140_FA_base_FA
+merging all upsampled FA images into single 4D image
+creating valid mask and mean FA
+skeletonising mean FA
+now view mean_FA_skeleton to check whether the default threshold of 0.2 needs changing, when running:
+tbss_4_prestats <threshold>
+creating skeleton mask using threshold 0.2
+creating skeleton distancemap (for use in projection search)
+projecting all FA data onto skeleton
+
+now run stats - for example:
+randomise -i all_FA_skeletonised -o tbss -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+##### run tbss with halfway warping with FU2 #####
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI016_FA_base
+ADI020_FA_base
+ADI036_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI140_FA_base
+merging all upsampled bl images into single 4D image
+projecting all_bl onto mean FA skeleton
+now run stats - for example:
+randomise -i all_bl_skeletonised -o tbss_bl -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI016_FA_base
+ADI020_FA_base
+ADI036_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI140_FA_base
+merging all upsampled fu images into single 4D image
+
+Usage: fslmerge <-x/y/z/t/a/tr> <output> <file1 file2 .......> [tr value in seconds]
+     -t : concatenate images in time
+     -x : concatenate images in the x direction
+     -y : concatenate images in the y direction
+     -z : concatenate images in the z direction
+     -a : auto-choose: single slices -> volume, volumes -> 4D (time series)
+     -tr : concatenate images in time and set the output image tr to the final option value
+projecting all_fu onto mean FA skeleton
+now run stats - for example:
+randomise -i all_fu_skeletonised -o tbss_fu -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+##### run tbss with halfway warping with FU2 #####
+using pre-chosen registration target: 
+upsampling alternative images into standard space
+merging all upsampled fu2 images into single 4D image
+
+Usage: fslmerge <-x/y/z/t/a/tr> <output> <file1 file2 .......> [tr value in seconds]
+     -t : concatenate images in time
+     -x : concatenate images in the x direction
+     -y : concatenate images in the y direction
+     -z : concatenate images in the z direction
+     -a : auto-choose: single slices -> volume, volumes -> 4D (time series)
+     -tr : concatenate images in time and set the output image tr to the final option value
+projecting all_fu2 onto mean FA skeleton
+now run stats - for example:
+randomise -i all_fu2_skeletonised -o tbss_fu2 -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+############################
+########## Wed Jan  8 11:09:45 CET 2020 ###########
+############################
+##### run tbss with halfway warping with FU2 #####
+using pre-chosen registration target: target
+upsampling alternative images into standard space
+ADI006_FA_base
+ADI009_FA_base
+ADI016_FA_base
+ADI020_FA_base
+ADI036_FA_base
+ADI045_FA_base
+ADI046_FA_base
+ADI048_FA_base
+ADI049_FA_base
+ADI061_FA_base
+ADI062_FA_base
+ADI064_FA_base
+ADI068_FA_base
+ADI072_FA_base
+ADI087_FA_base
+ADI097_FA_base
+ADI111_FA_base
+ADI116_FA_base
+ADI124_FA_base
+ADI140_FA_base
+merging all upsampled fu2 images into single 4D image
+projecting all_fu2 onto mean FA skeleton
+now run stats - for example:
+randomise -i all_fu2_skeletonised -o tbss_fu2 -m mean_FA_skeleton_mask -d design.mat -t design.con -n 500 --T2 -V
+(after generating design.mat and design.con)
+############################
+########## Thu Jan  9 10:35:31 CET 2020 ###########
+############################
+#### erode mean fa mask to remove skull leftovers #####
+#### erode mean fa mask to remove skull leftovers ! a second time !#####
+#### apply mean_FA_mask_eroded_twice on mean_FA_skeleton_mask #####

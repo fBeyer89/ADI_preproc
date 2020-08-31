@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/CMakeFiles/Eigen"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/CMakeFiles/Eigen.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/CMakeFiles/Eigen-complete.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-install.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-mkdir.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-download.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-update.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-patch.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-configure.rule"
+		},
+		{
+			"file" : "/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"Eigen"
+		],
+		"name" : "Eigen"
+	}
+}

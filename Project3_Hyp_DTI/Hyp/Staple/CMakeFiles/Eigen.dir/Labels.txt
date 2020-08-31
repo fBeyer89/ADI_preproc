@@ -1,0 +1,13 @@
+# Target labels
+ Eigen
+# Source files and their labels
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/CMakeFiles/Eigen
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/CMakeFiles/Eigen.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/CMakeFiles/Eigen-complete.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-install.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-mkdir.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-download.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-update.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-patch.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-configure.rule
+/data/pt_life_hypothalamus_segmentation/segmentation/Scripts/Staple/Eigen/stamps/Eigen-build.rule

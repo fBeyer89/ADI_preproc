@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_fill_lesions.a  CMakeFiles/_seg_fill_lesions.dir/_seg_fill_lesions.cpp.o
+/usr/bin/ranlib lib_seg_fill_lesions.a

@@ -1,0 +1,1 @@
+/usr/bin/c++    -DFILE_OFFSETBITS=64 -DDIRENT=dirent64 -DREADDIR=readdir64 -O3 -DNDEBUG   CMakeFiles/seg_LabFusion.dir/seg_LabFusion.cpp.o  -o seg_LabFusion -rdynamic ../seg-lib/lib_seg_LabFusion.a ../seg-lib/lib_seg_tools.a ../seg-lib/lib_seg_FMM.a ../nifti/lib_seg_nifti.a -lz 

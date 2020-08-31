@@ -1,0 +1,1 @@
+/usr/bin/c++    -DFILE_OFFSETBITS=64 -DDIRENT=dirent64 -DREADDIR=readdir64 -O3 -DNDEBUG   CMakeFiles/seg_FillLesions.dir/seg_FillLesions.cpp.o  -o seg_FillLesions -rdynamic ../seg-lib/lib_seg_fill_lesions.a ../seg-lib/lib_seg_fill_lesions_other.a ../seg-lib/lib_seg_tools.a ../seg-lib/lib_seg_FMM.a ../nifti/lib_seg_nifti.a -lz 

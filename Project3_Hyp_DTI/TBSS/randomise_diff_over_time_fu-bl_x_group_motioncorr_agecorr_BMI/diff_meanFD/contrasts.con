@@ -1,0 +1,14 @@
+/ContrastName1	diff over time x group (fu-bl) 
+/ContrastName2	diff over time x group (bl-fu) 
+/ContrastName3	BMI_bl mean 
+/ContrastName4	BMI_change mean 
+/NumWaves	5
+/NumContrasts	4
+/PPheights		1.373349e+00	1.373349e+00	7.552983e+01	1.510118e+01
+/RequiredEffect		4.548	4.548	2.417	4.947
+
+/Matrix
+1.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 

@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_tools.a  CMakeFiles/_seg_tools.dir/_seg_tools.cpp.o
+/usr/bin/ranlib lib_seg_tools.a

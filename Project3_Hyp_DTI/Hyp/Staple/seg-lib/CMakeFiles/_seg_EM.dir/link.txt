@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_EM.a  CMakeFiles/_seg_EM.dir/_seg_EM.cpp.o
+/usr/bin/ranlib lib_seg_EM.a

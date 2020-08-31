@@ -1,0 +1,1 @@
+/usr/bin/c++    -DFILE_OFFSETBITS=64 -DDIRENT=dirent64 -DREADDIR=readdir64 -O3 -DNDEBUG   CMakeFiles/seg_CalcTopNCC.dir/seg_CalcTopNCC.cpp.o  -o seg_CalcTopNCC -rdynamic ../seg-lib/lib_seg_tools.a ../seg-lib/lib_seg_FMM.a ../nifti/lib_seg_nifti.a -lz 

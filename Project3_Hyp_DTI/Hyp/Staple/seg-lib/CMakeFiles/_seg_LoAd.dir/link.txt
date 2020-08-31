@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_LoAd.a  CMakeFiles/_seg_LoAd.dir/_seg_LoAd.cpp.o
+/usr/bin/ranlib lib_seg_LoAd.a

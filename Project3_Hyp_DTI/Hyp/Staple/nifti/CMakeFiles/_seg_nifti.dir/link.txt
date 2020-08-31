@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib_seg_nifti.a  CMakeFiles/_seg_nifti.dir/nifti1_io.c.o CMakeFiles/_seg_nifti.dir/znzlib.c.o
+/usr/bin/ranlib lib_seg_nifti.a

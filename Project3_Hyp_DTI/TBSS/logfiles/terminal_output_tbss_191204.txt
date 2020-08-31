@@ -1,0 +1,8 @@
+Script started on 2019-12-04 15:10:01+0100
+fsl=5.0.11_thieleking@ufo:/data/pt_02161/Analysis/Project3_Hyp_DTI/TBSS > sh tbss_long.sh 
+##### run regular tbss routine #####
+##### run tbss with halfway warping #####
+fsl=5.0.11_thieleking@ufo:/data/pt_02161/Analysis/Project3_Hyp_DTI/TBSS > exit
+exit
+
+Script done on 2019-12-04 18:50:48+0100

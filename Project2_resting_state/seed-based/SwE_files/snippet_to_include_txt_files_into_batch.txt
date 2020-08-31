@@ -1,0 +1,7 @@
+
+file_age="/data/pt_02161/Analysis/Project2_resting_state/seed-based/SwE_files/Age.txt"
+fileID=fopen(file_age,'r')
+formatSpec='%d'
+age=fscanf(fileID,formatSpec)
+matlabbatch{1}.spm.tools.swe.smodel.cov(9).c=age
+matlabbatch{1}.spm.tools.swe.smodel.cov(9).cname = 'Age_BL';

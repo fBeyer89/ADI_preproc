@@ -1,0 +1,12 @@
+/ContrastName1	diff time by group (fu-bl)  
+/ContrastName2	diff time by group (bl-fu)  
+/ContrastName3	diff_meanFD mean 
+/NumWaves	2
+/NumContrasts	3
+/PPheights		1.828557e+00	1.828557e+00	5.344492e-01
+/RequiredEffect		2.549	2.549	3.719
+
+/Matrix
+1.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 
+0.000000e+00 1.000000e+00 

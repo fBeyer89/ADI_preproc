@@ -1,0 +1,14 @@
+/ContrastName1	diff over time (fu-bl) 
+/ContrastName2	diff over time (bl-fu) 
+/ContrastName3	diff meanFD 
+/ContrastName4	Age BL z 
+/NumWaves	3
+/NumContrasts	4
+/PPheights		1.690741e+00	1.690741e+00	4.084076e-01	2.864909e+00
+/RequiredEffect		4.403	4.403	7.565	6.671
+
+/Matrix
+1.000000e+00 0.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 0.000000e+00 
+0.000000e+00 1.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 1.000000e+00 

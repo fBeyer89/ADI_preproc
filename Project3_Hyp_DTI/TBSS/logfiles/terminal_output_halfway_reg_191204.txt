@@ -1,0 +1,177 @@
+Script started on 2019-12-04 14:52:02+0100
+fsl=5.0.11_thieleking@ufo:/data/pt_02161/Analysis/Project3_Hyp_DTI/TBSS > sh tbss_long.sh
+##### # calculate halfway image and calculate base images for Subject ADI069 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI036 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI124 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI046 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI068 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI020 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+Image Exception : #3 :: Attempted to add images/ROIs of different sizes
+terminate called after throwing an instance of 'RBD_COMMON::BaseException'
+tbss_long.sh: line 53: 46761 Aborted                 fslmaths $halfway_dir/${s}_FA_bl_halfway.nii.gz -add $halfway_dir/${s}_FA_fu_halfway.nii.gz -div 2 $base_dir/${s}_FA_base.nii.gz >> logfiles/halfway_registration.log
+##### # calculate halfway image and calculate base images for Subject ADI140 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI045 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI009 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI041 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI025 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI111 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI064 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI107 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI072 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI087 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI048 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI049 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI016 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI062 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI116 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI139 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI013 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI063 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI061 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI006 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI102 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### # calculate halfway image and calculate base images for Subject ADI097 #####
+
+WARNING:: Inconsistent orientations for individual images in pipeline!
+          Will use voxel-based orientation which is probably incorrect - *PLEASE CHECK*!
+
+##### rename halfway to make tbss_non_FA-conform for Subject ADI069 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI036 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI124 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI046 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI068 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI020 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI140 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI045 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI009 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI041 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI025 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI111 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI064 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI107 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI072 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI087 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI048 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI049 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI016 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI062 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI116 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI139 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI013 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI063 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI061 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI006 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI102 #####
+##### rename halfway to make tbss_non_FA-conform for Subject ADI097 #####
+fsl=5.0.11_thieleking@ufo:/data/pt_02161/Analysis/Project3_Hyp_DTI/TBSS > exit
+exit
+
+Script done on 2019-12-04 15:04:48+0100

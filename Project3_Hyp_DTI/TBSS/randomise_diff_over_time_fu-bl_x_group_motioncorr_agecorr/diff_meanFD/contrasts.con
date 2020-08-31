@@ -1,0 +1,14 @@
+/ContrastName1	IG - KG 
+/ContrastName2	IG - KG 
+/ContrastName3	diff meanFD 
+/ContrastName4	Age BL z 
+/NumWaves	4
+/NumContrasts	4
+/PPheights		1.601314e+00	1.601314e+00	5.508612e-01	3.567238e+00
+/RequiredEffect		3.315	3.315	4.053	3.461
+
+/Matrix
+1.000000e+00 -1.000000e+00 0.000000e+00 0.000000e+00 
+-1.000000e+00 1.000000e+00 0.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00 
+0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 

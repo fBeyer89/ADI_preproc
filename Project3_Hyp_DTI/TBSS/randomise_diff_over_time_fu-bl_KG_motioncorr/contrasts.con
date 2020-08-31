@@ -1,0 +1,10 @@
+/ContrastName1	group mean (fu-bl) 
+/ContrastName2	group mean (bl-fu) 
+/NumWaves	2
+/NumContrasts	2
+/PPheights		1.468379e+00	1.468379e+00
+/RequiredEffect		2.987	2.987
+
+/Matrix
+1.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 
