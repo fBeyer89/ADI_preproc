@@ -175,5 +175,5 @@ dependencies:
   - traits==4.6.0
   - wheel==0.32.2
   - xvfbwrapper==0.2.9
-prefix: /home/raid1/fbeyer/local_pt_life/miniconda2/envs/nip_agewell
+prefix: /data/hu_heinrichs/Software/miniconda3/envs/nip_agewell
 
